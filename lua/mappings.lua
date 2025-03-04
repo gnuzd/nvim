@@ -8,7 +8,7 @@ map("n", "<C-s>", "<cmd> up <cr>", { desc = "general save buffer" })
 map("n", "<C-a>", "ggVG", { desc = "general select all" })
 map("n", "D", vim.diagnostic.open_float, { desc = "general show diagnostic error messages" })
 map("n", "<Esc>", "<cmd>noh<cr>", { desc = "general clear highligh" })
-map("n", "<PageUp>", "<ESC>^i", { desc = "general move beginning of line" })
+map("n", "<PageUp>", "^", { desc = "move to beginning of line" })
 
 map("n", "<C-h>", "<C-w>h", { desc = "switch window left" })
 map("n", "<C-l>", "<C-w>l", { desc = "switch window right" })
@@ -31,6 +31,13 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 
 map("t", "<C-/>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
 
+-- autopair
+map("v", "(", "()<ESC>i", { noremap = true })
+map("v", "[", "[]<ESC>i", { noremap = true })
+map("v", "{", "{}<ESC>i", { noremap = true })
+map("v", '"', '""<ESC>i', { noremap = true })
+map("v", "'", "''<ESC>i", { noremap = true })
+
 -- bdelete
 map("n", "<leader>x", "<cmd> lua require('bufdelete').bufdelete(0, false) <cr>", { desc = "bdelete close buffer" })
 
@@ -49,6 +56,9 @@ map("n", "<leader>so", "<cmd> SymbolsOutline <cr>", { desc = "symbol outline tog
 map("n", "<leader><space>", "<cmd> Telescope buffers <cr>", { desc = "telescope find buffers" })
 map("n", "<leader>sf", "<cmd> Telescope find_files <cr>", { desc = "telescope find files" })
 map("n", "<leader>sg", "<cmd> Telescope live_grep <cr>", { desc = "telescope live grep" })
+
+-- vimfade
+map("n", "<leader>fc", "<cmd> VimadeFocus <cr>", { desc = "vimfade toggle focus" })
 
 -- trouble
 map("n", "<leader>ss", "<cmd> Trouble diagnostics <cr>", { desc = "trouble diagnostics loclist" })

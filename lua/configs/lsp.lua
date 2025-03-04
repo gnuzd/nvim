@@ -46,6 +46,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+
+local _border = "rounded"
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = _border,
+})
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	border = _border,
+})
+
+vim.diagnostic.config({
+	float = { border = _border },
+})
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
@@ -63,6 +79,7 @@ require("mason-lspconfig").setup({
 	handlers = {
 		function(server_name)
 			local server = servers[server_name] or {}
+			-- server.handlers = handlers
 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 			require("lspconfig")[server_name].setup(server)
 		end,

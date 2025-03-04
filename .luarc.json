@@ -3,6 +3,7 @@
         "vim"
     ],
     "diagnostics.disable": [
-        "different-requires"
+        "different-requires",
+        "undefined-field"
     ]
 }

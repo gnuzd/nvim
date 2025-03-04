@@ -1,22 +1,29 @@
 return {
 	lsp = {
-		-- elixirls = {},
-		-- svelte = {},
+		elixirls = {},
+		svelte = {},
 		-- rust_analyzer = {},
-		-- jsonls = {},
-		-- ts_ls = {},
-		-- eslint_d = {},
-		-- prettierd = {},
+		jsonls = {},
+		ts_ls = {},
+		eslint_d = {},
+		prettierd = {},
 		-- solidity_ls_nomicfoundation = {},
-		-- cssls = {
-		-- 	settings = {
-		-- 		css = {
-		-- 			lint = {
-		-- 				unknownAtRules = "ignore",
-		-- 			},
-		-- 		},
-		-- 	},
-		-- },
+		harper_ls = {
+			settings = {
+				["harper-ls"] = {
+					userDictPath = vim.fn.stdpath("config") .. "/spell/en.utf-8.add",
+				},
+			},
+		},
+		cssls = {
+			settings = {
+				css = {
+					lint = {
+						unknownAtRules = "ignore",
+					},
+				},
+			},
+		},
 		lua_ls = {
 			settings = {
 				Lua = {
@@ -40,8 +47,10 @@ return {
 			"query",
 			"vim",
 			"vimdoc",
-			-- "css",
-			-- "graphql",
+			"css",
+			"graphql",
+			"javascript",
+			"typescript",
 		},
 	},
 }

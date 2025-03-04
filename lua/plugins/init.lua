@@ -1,40 +1,35 @@
 return {
 	"nvim-lua/plenary.nvim",
 
+	-- {
+	-- 	"catppuccin/nvim",
+	-- 	name = "catppuccin",
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		vim.cmd.colorscheme("catppuccin-mocha")
+	-- 	end,
+	-- },
 	{
-		"catppuccin/nvim",
-		name = "catppuccin",
+		"sainnhe/gruvbox-material",
 		priority = 1000,
 		config = function()
-			vim.cmd.colorscheme("catppuccin-mocha")
+			vim.g.gruvbox_material_better_performance = 1
+			vim.g.gruvbox_material_transparent_background = 2
+			vim.g.gruvbox_material_background = "soft"
+			vim.cmd.colorscheme("gruvbox-material")
 		end,
 	},
 
 	"famiu/bufdelete.nvim",
 
 	{
-		"yetone/avante.nvim",
+		"gnuzd/avante.nvim",
 		event = "VeryLazy",
 		lazy = false,
-		version = false, -- set this if you want to always pull the latest change
-		opts = {
-			provider = "gemini",
-			gemini = {
-				generationConfig = {
-					stopSequences = { "test" },
-				},
-			},
-			-- provider = "ollama",
-			-- vendors = {
-			-- 	ollama = {
-			-- 		__inherited_from = "openai",
-			-- 		model = "llama3.2",
-			-- 		api_key_name = "",
-			-- 		endpoint = "http://127.0.0.1:11434/v1",
-			-- 		max_token = 2048,
-			-- 	},
-			-- },
-		},
+		version = "*", -- set this if you want to always pull the latest change
+		opts = function()
+			return require("configs.code")
+		end,
 		-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
 		build = "make",
 		dependencies = {
@@ -61,14 +56,11 @@ return {
 					},
 				},
 			},
-			{
-				-- Make sure to set this up properly if you have lazy=true
-				"MeanderingProgrammer/render-markdown.nvim",
-				opts = {
-					file_types = { "markdown", "Avante" },
-				},
-				ft = { "markdown", "Avante" },
+			"MeanderingProgrammer/render-markdown.nvim",
+			opts = {
+				file_types = { "markdown", "Avante" },
 			},
+			ft = { "markdown", "Avante" },
 		},
 	},
 
@@ -125,7 +117,18 @@ return {
 					{
 						"windwp/nvim-autopairs",
 						opts = {
-							fast_wrap = {},
+							fast_wrap = {
+								map = "<M-e>",
+								chars = { "{", "[", "(", '"', "'" },
+								pattern = string.gsub([[ [%'%"%)%>%]%}%,] ]], "%s+", ""),
+								offset = 0, -- Offset from pattern match
+								end_key = "$",
+								keys = "qwertzuiopasdfghjklxcvbnm",
+								check_comma = true,
+								highlight = "Search",
+								highlight_grey = "Comment",
+								enable_in_visualmode = true,
+							},
 							disable_filetype = { "TelescopePrompt", "vim" },
 						},
 						config = function(_, opts)
@@ -189,6 +192,8 @@ return {
 		end,
 	},
 
+	{ "tadaa/vimade", opts = {} },
+
 	-- fuzzy finder (files, lsp, etc)
 	{
 		"nvim-telescope/telescope.nvim",
@@ -221,6 +226,16 @@ return {
 	},
 
 	{
+		"numToStr/Comment.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "JoosepAlviste/nvim-ts-context-commentstring" },
+		event = "BufReadPre",
+		config = function()
+			local prehook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()
+			require("Comment").setup({ pre_hook = prehook })
+		end,
+	},
+
+	{
 		"folke/todo-comments.nvim",
 		opts = { signs = false },
 	},
@@ -241,6 +256,41 @@ return {
 		},
 		config = function()
 			require("configs.ufo")
+		end,
+	},
+
+	{ "windwp/nvim-ts-autotag", opts = {} },
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		build = "cd app && yarn install",
+		init = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	},
+
+	{ "rest-nvim/rest.nvim" },
+
+	-- IMPORTANT: need to install this `brew install libpq`
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
+		},
+		cmd = {
+			"DBUI",
+			"DBUIToggle",
+			"DBUIAddConnection",
+			"DBUIFindBuffer",
+		},
+		keys = {
+			{ "<leader>e", ":DBUIToggle <CR>", desc = "dbui toggle", silent = true },
+		},
+
+		init = function()
+			vim.g.db_ui_use_nerd_fonts = 1
 		end,
 	},
 
