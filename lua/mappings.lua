@@ -29,7 +29,7 @@ map("i", "<C-l>", "<Right>", { desc = "move right" })
 map("i", "<C-j>", "<Down>", { desc = "move down" })
 map("i", "<C-k>", "<Up>", { desc = "move up" })
 
-map("t", "<C-/>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
+map("v", "<PageUp>", "^", { desc = "move to beginning of line" })
 
 -- autopair
 map("v", "(", "()<ESC>i", { noremap = true })
@@ -39,7 +39,7 @@ map("v", '"', '""<ESC>i', { noremap = true })
 map("v", "'", "''<ESC>i", { noremap = true })
 
 -- bdelete
-map("n", "<leader>x", "<cmd> lua require('bufdelete').bufdelete(0, false) <cr>", { desc = "bdelete close buffer" })
+map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 
 -- comment
 map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })

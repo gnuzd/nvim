@@ -8,13 +8,7 @@ return {
 		eslint_d = {},
 		prettierd = {},
 		-- solidity_ls_nomicfoundation = {},
-		harper_ls = {
-			settings = {
-				["harper-ls"] = {
-					userDictPath = vim.fn.stdpath("config") .. "/spell/en.utf-8.add",
-				},
-			},
-		},
+		tailwindcss = {},
 		cssls = {
 			settings = {
 				css = {
@@ -24,6 +18,7 @@ return {
 				},
 			},
 		},
+		typos_lsp = {},
 		lua_ls = {
 			settings = {
 				Lua = {

@@ -27,9 +27,6 @@ o.numberwidth = 2
 o.relativenumber = true
 o.ruler = false
 
--- disable nvim intro
-opt.shortmess:append("sI")
-
 o.signcolumn = "yes"
 o.splitbelow = true
 o.splitright = true
@@ -44,6 +41,14 @@ o.foldenable = true
 
 -- interval for writing swap file to disk, also used by gitsigns
 o.updatetime = 250
+
+o.spell = true
+o.spelllang = "en_us"
+--o.spelloptions = o.spelloptions .. ",camel"
+--o.spelloptions = o.spelloptions .. ",nroff"
+
+-- disable nvim intro
+opt.shortmess:append("sI")
 
 -- go to previous/next line with h,l,left arrow and right arrow
 -- when cursor reaches end/beginning of line

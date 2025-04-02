@@ -1,14 +1,6 @@
 return {
 	"nvim-lua/plenary.nvim",
 
-	-- {
-	-- 	"catppuccin/nvim",
-	-- 	name = "catppuccin",
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		vim.cmd.colorscheme("catppuccin-mocha")
-	-- 	end,
-	-- },
 	{
 		"sainnhe/gruvbox-material",
 		priority = 1000,
@@ -18,6 +10,7 @@ return {
 			vim.g.gruvbox_material_background = "soft"
 			vim.cmd.colorscheme("gruvbox-material")
 			vim.api.nvim_set_hl(0, "FloatBorder", { bg = "" })
+			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "" })
 		end,
 	},
 
@@ -27,11 +20,11 @@ return {
 		"gnuzd/avante.nvim",
 		event = "VeryLazy",
 		lazy = false,
-		version = "*", -- set this if you want to always pull the latest change
+		version = "*", -- Set this if you want to always pull the latest change
 		opts = function()
 			return require("configs.code")
 		end,
-		-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+		-- If you want to build from source then do `make BUILD_FROM_SOURCE=true`
 		build = "make",
 		dependencies = {
 			"stevearc/dressing.nvim",
@@ -293,6 +286,18 @@ return {
 		init = function()
 			vim.g.db_ui_use_nerd_fonts = 1
 		end,
+	},
+
+	{
+		"luckasRanarison/tailwind-tools.nvim",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim", -- optional
+			"neovim/nvim-lspconfig", -- optional
+		},
+		opts = {},
 	},
 
 	{
