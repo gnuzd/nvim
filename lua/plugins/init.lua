@@ -17,14 +17,13 @@ return {
 	"famiu/bufdelete.nvim",
 
 	{
-		"gnuzd/avante.nvim",
+		"yetone/avante.nvim",
 		event = "VeryLazy",
+		version = false,
 		lazy = false,
-		version = "*", -- Set this if you want to always pull the latest change
 		opts = function()
 			return require("configs.code")
 		end,
-		-- If you want to build from source then do `make BUILD_FROM_SOURCE=true`
 		build = "make",
 		dependencies = {
 			"stevearc/dressing.nvim",
@@ -67,6 +66,41 @@ return {
 	},
 
 	{
+		"nvimtools/none-ls.nvim",
+		event = "VeryLazy",
+		dependencies = { "davidmh/cspell.nvim" },
+		opts = function(_, opts)
+			local cspell = require("cspell")
+			opts.sources = opts.sources or {}
+			table.insert(
+				opts.sources,
+				cspell.diagnostics.with({
+					diagnostics_postprocess = function(diagnostic)
+						diagnostic.severity = vim.diagnostic.severity.HINT
+					end,
+				})
+			)
+			table.insert(opts.sources, cspell.code_actions)
+		end,
+		-- dependencies = {
+		-- 	"mason.nvim",
+		-- 	"nvimtools/none-ls-extras.nvim",
+		-- 	"davidmh/cspell.nvim",
+		-- },
+		-- config = function()
+		-- 	local none_ls = require("null-ls")
+		-- 	local cspell = require("cspell")
+		--
+		-- 	none_ls.setup({
+		-- 		sources = {
+		-- 			cspell.diagnostics,
+		-- 			cspell.code_actions,
+		-- 		},
+		-- 	})
+		-- end,
+	},
+
+	{
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
 		opts = {
@@ -97,6 +131,7 @@ return {
 		dependencies = {
 			{
 				"L3MON4D3/LuaSnip",
+				version = "2.*",
 				build = (function()
 					return "make install_jsregexp"
 				end)(),
@@ -150,7 +185,16 @@ return {
 			{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			{ "j-hui/fidget.nvim", opts = {} },
+			{
+				"j-hui/fidget.nvim",
+				opts = {
+					progress = {
+						ignore = {
+							"null-ls",
+						},
+					},
+				},
+			},
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()

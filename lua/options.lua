@@ -42,11 +42,6 @@ o.foldenable = true
 -- interval for writing swap file to disk, also used by gitsigns
 o.updatetime = 250
 
-o.spell = true
-o.spelllang = "en_us"
---o.spelloptions = o.spelloptions .. ",camel"
---o.spelloptions = o.spelloptions .. ",nroff"
-
 -- disable nvim intro
 opt.shortmess:append("sI")
 
