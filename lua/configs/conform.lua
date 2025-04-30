@@ -29,6 +29,7 @@ require("conform").setup({
 			end,
 		},
 	},
+	notify_on_error = false,
 	formatters_by_ft = {
 		lua = { "stylua" },
 		css = { "prettierd" },

@@ -4,7 +4,7 @@ local map = vim.keymap.set
 map("n", "<leader>n", "<cmd> enew <cr>", { desc = "general new buffer" })
 map("n", "<tab>", "<cmd> bnex <cr>", { desc = "general next buffer" })
 map("n", "<S-tab>", "<cmd> bprevious <cr>", { desc = "general prev buffer" })
-map("n", "<C-s>", "<cmd> up <cr>", { desc = "general save buffer" })
+map("n", "<C-s>", "<cmd> w <cr>", { desc = "general save buffer" })
 map("n", "<C-a>", "ggVG", { desc = "general select all" })
 map("n", "D", vim.diagnostic.open_float, { desc = "general show diagnostic error messages" })
 map("n", "<Esc>", "<cmd>noh<cr>", { desc = "general clear highligh" })
@@ -31,13 +31,6 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 
 map("v", "<PageUp>", "^", { desc = "move to beginning of line" })
 
--- autopair
-map("v", "(", "()<ESC>i", { noremap = true })
-map("v", "[", "[]<ESC>i", { noremap = true })
-map("v", "{", "{}<ESC>i", { noremap = true })
-map("v", '"', '""<ESC>i', { noremap = true })
-map("v", "'", "''<ESC>i", { noremap = true })
-
 -- bdelete
 map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 
@@ -49,16 +42,13 @@ map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
 -- gitsigns
 map("n", "<leader>gb", "<cmd> Gitsigns blame_line <cr>", { desc = "gitsigns blame line" })
 
--- symbol-ouline
-map("n", "<leader>so", "<cmd> SymbolsOutline <cr>", { desc = "symbol outline toggle" })
+-- oil
+map("n", "\\", "<cmd> Oil <cr>", { desc = "oil open" })
 
 -- telescope
 map("n", "<leader><space>", "<cmd> Telescope buffers <cr>", { desc = "telescope find buffers" })
 map("n", "<leader>sf", "<cmd> Telescope find_files <cr>", { desc = "telescope find files" })
 map("n", "<leader>sg", "<cmd> Telescope live_grep <cr>", { desc = "telescope live grep" })
-
--- vimfade
-map("n", "<leader>fc", "<cmd> VimadeFocus <cr>", { desc = "vimfade toggle focus" })
 
 -- trouble
 map("n", "<leader>ss", "<cmd> Trouble diagnostics <cr>", { desc = "trouble diagnostics loclist" })

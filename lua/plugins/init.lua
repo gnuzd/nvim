@@ -1,5 +1,5 @@
 return {
-	"nvim-lua/plenary.nvim",
+	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
 	{
 		"sainnhe/gruvbox-material",
@@ -13,8 +13,6 @@ return {
 			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "" })
 		end,
 	},
-
-	"famiu/bufdelete.nvim",
 
 	{
 		"yetone/avante.nvim",
@@ -57,58 +55,6 @@ return {
 		},
 	},
 
-	-- formatting!
-	{
-		"stevearc/conform.nvim",
-		config = function()
-			return require("configs.conform")
-		end,
-	},
-
-	{
-		"nvimtools/none-ls.nvim",
-		event = "VeryLazy",
-		dependencies = { "davidmh/cspell.nvim" },
-		opts = function(_, opts)
-			local cspell = require("cspell")
-			opts.sources = opts.sources or {}
-			table.insert(
-				opts.sources,
-				cspell.diagnostics.with({
-					diagnostics_postprocess = function(diagnostic)
-						diagnostic.severity = vim.diagnostic.severity.HINT
-					end,
-				})
-			)
-			table.insert(opts.sources, cspell.code_actions)
-		end,
-		-- dependencies = {
-		-- 	"mason.nvim",
-		-- 	"nvimtools/none-ls-extras.nvim",
-		-- 	"davidmh/cspell.nvim",
-		-- },
-		-- config = function()
-		-- 	local none_ls = require("null-ls")
-		-- 	local cspell = require("cspell")
-		--
-		-- 	none_ls.setup({
-		-- 		sources = {
-		-- 			cspell.diagnostics,
-		-- 			cspell.code_actions,
-		-- 		},
-		-- 	})
-		-- end,
-	},
-
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
-		opts = {
-			indent = { char = "┊" },
-			scope = { highlight = { "Normal" } },
-		},
-	},
-
 	{ -- Adds git related signs to the gutter, as well as utilities for managing changes
 		"lewis6991/gitsigns.nvim",
 		opts = {
@@ -119,12 +65,112 @@ return {
 				topdelete = { text = "‾" },
 				changedelete = { text = "~" },
 			},
-			current_line_blame = true,
 		},
 	},
 
-	-- autocompletion
 	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+			"nvim-telescope/telescope.nvim",
+		},
+	},
+
+	{ -- Useful plugin to show you pending keybinds.
+		"folke/which-key.nvim",
+		event = "VimEnter", -- Sets the loading event to 'VimEnter'
+		opts = {
+			-- delay between pressing a key and opening which-key (milliseconds)
+			-- this setting is independent of vim.opt.timeoutlen
+			delay = 0,
+			icons = {
+				mappings = true,
+				keys = {},
+			},
+		},
+	},
+
+	{ -- Fuzzy Finder (files, lsp, etc)
+		"nvim-telescope/telescope.nvim",
+		event = "VimEnter",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{ -- If encountering errors, see telescope-fzf-native README for installation instructions
+				"nvim-telescope/telescope-fzf-native.nvim",
+
+				-- `build` is used to run some command when the plugin is installed/updated.
+				-- This is only run then, not every time Neovim starts up.
+				build = "make",
+
+				-- `cond` is a condition used to determine whether this plugin should be
+				-- installed and loaded.
+				cond = function()
+					return vim.fn.executable("make") == 1
+				end,
+			},
+			{ "nvim-telescope/telescope-ui-select.nvim" },
+
+			-- Useful for getting pretty icons, but requires a Nerd Font.
+			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
+		},
+		config = function()
+			require("configs.telescope")
+		end,
+	},
+
+	-- LSP Plugins
+	{
+		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+		-- used for completion, annotations and signatures of Neovim apis
+		"folke/lazydev.nvim",
+		ft = "lua",
+		opts = {
+			library = {
+				-- Load luvit types when the `vim.uv` word is found
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+			},
+		},
+	},
+
+	{
+		-- Main LSP Configuration
+		"neovim/nvim-lspconfig",
+		dependencies = {
+			-- Automatically install LSPs and related tools to stdpath for Neovim
+			-- Mason must be loaded before its dependents so we need to set it up here.
+			-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+			{ "williamboman/mason.nvim", opts = {} },
+			"williamboman/mason-lspconfig.nvim",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+
+			-- Useful status updates for LSP.
+			{
+				"j-hui/fidget.nvim",
+				opts = {
+					progress = {
+						ignore = { "null-ls" },
+					},
+				},
+			},
+
+			"hrsh7th/cmp-nvim-lsp",
+		},
+		config = function()
+			require("configs.lsp")
+		end,
+	},
+
+	{ -- Autoformat
+		"stevearc/conform.nvim",
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
+		config = function()
+			return require("configs.conform")
+		end,
+	},
+
+	{ -- Autocompletion
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		version = false,
@@ -178,27 +224,58 @@ return {
 		end,
 	},
 
-	-- lsp
 	{
-		"neovim/nvim-lspconfig",
-		dependencies = {
-			{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
-			"williamboman/mason-lspconfig.nvim",
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
-			{
-				"j-hui/fidget.nvim",
-				opts = {
-					progress = {
-						ignore = {
-							"null-ls",
-						},
-					},
-				},
-			},
-			"hrsh7th/cmp-nvim-lsp",
-		},
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		main = "nvim-treesitter.configs",
+		opts = function()
+			return require("configs.treesitter")
+		end,
+	},
+
+	{
+		"goolord/alpha-nvim",
 		config = function()
-			require("configs.lsp")
+			local theta = require("configs.alpha").config
+			require("alpha").setup(theta)
+		end,
+	},
+
+	"famiu/bufdelete.nvim",
+
+	{
+		"nvimtools/none-ls.nvim",
+		event = "VeryLazy",
+		dependencies = { "davidmh/cspell.nvim" },
+		opts = function(_, opts)
+			local cspell = require("cspell")
+			opts.sources = opts.sources or {}
+			table.insert(
+				opts.sources,
+				cspell.diagnostics.with({
+					diagnostics_postprocess = function(diagnostic)
+						diagnostic.severity = vim.diagnostic.severity.HINT
+					end,
+				})
+			)
+			table.insert(opts.sources, cspell.code_actions)
+		end,
+	},
+
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		opts = {
+			indent = { char = "┊" },
+			scope = { highlight = { "Normal" } },
+		},
+	},
+
+	{
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("configs.oil")
 		end,
 	},
 
@@ -209,57 +286,6 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("configs.lualine")
-		end,
-	},
-
-	-- file managing , picker etc
-	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons",
-			"MunifTanjim/nui.nvim",
-		},
-		cmd = "Neotree",
-		keys = {
-			{ "\\", ":Neotree reveal<CR>", desc = "NeoTree reveal", silent = true },
-		},
-		opts = function()
-			return require("configs.neotree")
-		end,
-	},
-
-	{ "tadaa/vimade", opts = {} },
-
-	-- fuzzy finder (files, lsp, etc)
-	{
-		"nvim-telescope/telescope.nvim",
-		event = "VimEnter",
-		branch = "0.1.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			{
-				"nvim-telescope/telescope-fzf-native.nvim",
-				build = "make",
-				cond = function()
-					return vim.fn.executable("make") == 1
-				end,
-			},
-			{ "nvim-telescope/telescope-ui-select.nvim" },
-			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
-		},
-		config = function()
-			require("configs.telescope")
-		end,
-	},
-
-	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		main = "nvim-treesitter.configs",
-		opts = function()
-			return require("configs.treesitter")
 		end,
 	},
 
@@ -341,14 +367,6 @@ return {
 			"nvim-telescope/telescope.nvim", -- optional
 			"neovim/nvim-lspconfig", -- optional
 		},
-		opts = {},
-	},
-
-	{
-		"folke/which-key.nvim",
-		event = "VimEnter",
-		keys = { "<leader>", "<c-w>", '"', "'", "`", "c", "v", "g" },
-		cmd = "WhichKey",
 		opts = {},
 	},
 }

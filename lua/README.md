@@ -6,6 +6,14 @@
 ```
   brew install ripgrep
 ```
+- [Vim Dadbod UI](https://github.com/kristijanhusak/vim-dadbod-ui)
+```
+  brew install libpq
+```
+- [Cspell](https://github.com/davidmh/cspell.nvim)
+```
+:MasonInstall cspell 
+```
 
 ### Install
 
@@ -22,5 +30,6 @@
 ### [LSP](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md "LSP")
 
 uncomment lsp under nvconfig.lua
+
 
 

@@ -7,6 +7,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		map("<leader>D", require("telescope.builtin").lsp_type_definitions, "type definition")
+
+		map("K", function()
+			vim.lsp.buf.hover({ border = "rounded", max_height = 50, max_width = 120 })
+		end, "hover document", { "n" })
+
 		map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "document symbols")
 		map("<leader>ca", vim.lsp.buf.code_action, "code action", { "n", "x" })
 
@@ -48,18 +53,31 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 
-local _border = "rounded"
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = _border,
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = _border,
-})
-
 vim.diagnostic.config({
-	float = { border = _border },
+	severity_sort = true,
+	float = { border = "rounded", source = "if_many" },
+	underline = { severity = vim.diagnostic.severity.ERROR },
+	signs = vim.g.have_nerd_font and {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "󰅚 ",
+			[vim.diagnostic.severity.WARN] = "󰀪 ",
+			[vim.diagnostic.severity.INFO] = "󰋽 ",
+			[vim.diagnostic.severity.HINT] = "󰌶 ",
+		},
+	} or {},
+	virtual_text = {
+		source = "if_many",
+		spacing = 2,
+		format = function(diagnostic)
+			local diagnostic_message = {
+				[vim.diagnostic.severity.ERROR] = diagnostic.message,
+				[vim.diagnostic.severity.WARN] = diagnostic.message,
+				[vim.diagnostic.severity.INFO] = diagnostic.message,
+				[vim.diagnostic.severity.HINT] = diagnostic.message,
+			}
+			return diagnostic_message[diagnostic.severity]
+		end,
+	},
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()

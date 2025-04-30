@@ -1,46 +1,46 @@
 local opt = vim.opt
-local o = vim.o
 local g = vim.g
 
 -------------------------------------- options ------------------------------------------
-o.laststatus = 3
 
-o.clipboard = "unnamedplus"
-o.cursorline = true
-o.cursorlineopt = "number"
+opt.laststatus = 3
+
+opt.clipboard = "unnamedplus"
+opt.cursorline = true
+opt.cursorlineopt = "number"
 
 -- Indenting
-o.expandtab = true
-o.shiftwidth = 2
-o.smartindent = true
-o.tabstop = 2
-o.softtabstop = 2
+opt.expandtab = true
+opt.shiftwidth = 2
+opt.smartindent = true
+opt.tabstop = 2
+opt.softtabstop = 2
 
 opt.fillchars = { eob = " " }
-o.ignorecase = true
-o.smartcase = true
-o.mouse = "a"
+opt.ignorecase = true
+opt.smartcase = true
+opt.mouse = "a"
 
 -- Numbers
-o.number = true
-o.numberwidth = 2
-o.relativenumber = true
-o.ruler = false
+opt.number = true
+opt.numberwidth = 2
+opt.relativenumber = true
+opt.ruler = false
 
-o.signcolumn = "yes"
-o.splitbelow = true
-o.splitright = true
-o.timeoutlen = 400
-o.undofile = true
+opt.signcolumn = "yes"
+opt.splitbelow = true
+opt.splitright = true
+opt.timeoutlen = 400
+opt.undofile = true
 
 -- Enable fold
-o.foldcolumn = "0" -- '0' is not bad
-o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-o.foldlevelstart = 99
-o.foldenable = true
+opt.foldcolumn = "0" -- '0' is not bad
+opt.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+opt.foldlevelstart = 99
+opt.foldenable = true
 
 -- interval for writing swap file to disk, also used by gitsigns
-o.updatetime = 250
+opt.updatetime = 250
 
 -- disable nvim intro
 opt.shortmess:append("sI")
