@@ -27,26 +27,8 @@ return {
 			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
-			--- The below dependencies are optional,
 			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
-			{
-				-- support for image pasting
-				"HakonHarnes/img-clip.nvim",
-				event = "VeryLazy",
-				opts = {
-					-- recommended settings
-					default = {
-						embed_image_as_base64 = false,
-						prompt_for_file_name = false,
-						drag_and_drop = {
-							insert_mode = true,
-						},
-						-- required for Windows users
-						use_absolute_path = true,
-					},
-				},
-			},
 			"MeanderingProgrammer/render-markdown.nvim",
 			opts = {
 				file_types = { "markdown", "Avante" },
@@ -77,7 +59,7 @@ return {
 		},
 	},
 
-	{ -- Useful plugin to show you pending keybinds.
+	{                   -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'
 		opts = {
@@ -112,7 +94,7 @@ return {
 			{ "nvim-telescope/telescope-ui-select.nvim" },
 
 			-- Useful for getting pretty icons, but requires a Nerd Font.
-			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
+			{ "nvim-tree/nvim-web-devicons",            enabled = vim.g.have_nerd_font },
 		},
 		config = function()
 			require("configs.telescope")
@@ -340,7 +322,7 @@ return {
 	{
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
-			{ "tpope/vim-dadbod", lazy = true },
+			{ "tpope/vim-dadbod",                     lazy = true },
 			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
 		},
 		cmd = {
@@ -365,7 +347,7 @@ return {
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-telescope/telescope.nvim", -- optional
-			"neovim/nvim-lspconfig", -- optional
+			"neovim/nvim-lspconfig",      -- optional
 		},
 		opts = {},
 	},
