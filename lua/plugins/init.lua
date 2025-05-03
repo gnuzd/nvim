@@ -59,7 +59,7 @@ return {
 		},
 	},
 
-	{                   -- Useful plugin to show you pending keybinds.
+	{ -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'
 		opts = {
@@ -94,7 +94,7 @@ return {
 			{ "nvim-telescope/telescope-ui-select.nvim" },
 
 			-- Useful for getting pretty icons, but requires a Nerd Font.
-			{ "nvim-tree/nvim-web-devicons",            enabled = vim.g.have_nerd_font },
+			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 		},
 		config = function()
 			require("configs.telescope")
@@ -272,13 +272,9 @@ return {
 	},
 
 	{
-		"numToStr/Comment.nvim",
-		dependencies = { "nvim-treesitter/nvim-treesitter", "JoosepAlviste/nvim-ts-context-commentstring" },
-		event = "BufReadPre",
-		config = function()
-			local prehook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()
-			require("Comment").setup({ pre_hook = prehook })
-		end,
+		"folke/ts-comments.nvim",
+		opts = {},
+		event = "VeryLazy",
 	},
 
 	{
@@ -322,7 +318,7 @@ return {
 	{
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
-			{ "tpope/vim-dadbod",                     lazy = true },
+			{ "tpope/vim-dadbod", lazy = true },
 			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
 		},
 		cmd = {
@@ -347,7 +343,7 @@ return {
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-telescope/telescope.nvim", -- optional
-			"neovim/nvim-lspconfig",      -- optional
+			"neovim/nvim-lspconfig", -- optional
 		},
 		opts = {},
 	},
