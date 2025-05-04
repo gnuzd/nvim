@@ -80,23 +80,22 @@ vim.diagnostic.config({
 	},
 })
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-
-local servers = require("nvconfig").lsp
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 require("mason").setup()
-
+local servers = require("nvconfig").lsp
 local ensure_installed = vim.tbl_keys(servers or {})
-vim.list_extend(ensure_installed, { "stylua" })
+vim.list_extend(ensure_installed, { "stylua", "cspell" })
 require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 require("mason-lspconfig").setup({
+	ensure_installed = {},
+	automatic_installation = false,
 	handlers = {
 		function(server_name)
 			local server = servers[server_name] or {}
 			server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-			vim.lsp.config(server_name, server)
+			vim.lsp.config[server_name] = server
 			vim.lsp.enable(server_name)
 		end,
 	},

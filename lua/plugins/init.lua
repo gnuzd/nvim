@@ -50,27 +50,10 @@ return {
 		},
 	},
 
-	{
-		"NeogitOrg/neogit",
-		dependencies = {
-			"nvim-lua/plenary.nvim", -- required
-			"sindrets/diffview.nvim", -- optional - Diff integration
-			"nvim-telescope/telescope.nvim",
-		},
-	},
-
 	{ -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
 		event = "VimEnter", -- Sets the loading event to 'VimEnter'
-		opts = {
-			-- delay between pressing a key and opening which-key (milliseconds)
-			-- this setting is independent of vim.opt.timeoutlen
-			delay = 0,
-			icons = {
-				mappings = true,
-				keys = {},
-			},
-		},
+		opts = {},
 	},
 
 	{ -- Fuzzy Finder (files, lsp, etc)
@@ -122,7 +105,7 @@ return {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
 			-- Mason must be loaded before its dependents so we need to set it up here.
 			-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-			{ "williamboman/mason.nvim", opts = {} },
+			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
@@ -136,7 +119,8 @@ return {
 				},
 			},
 
-			"hrsh7th/cmp-nvim-lsp",
+			-- "hrsh7th/cmp-nvim-lsp",
+			"saghen/blink.cmp",
 		},
 		config = function()
 			require("configs.lsp")
@@ -153,10 +137,11 @@ return {
 	},
 
 	{ -- Autocompletion
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		version = false,
+		"saghen/blink.cmp",
+		event = "VimEnter",
+		version = "1.*",
 		dependencies = {
+			-- Snippet Engine
 			{
 				"L3MON4D3/LuaSnip",
 				version = "2.*",
@@ -170,39 +155,13 @@ return {
 							require("luasnip.loaders.from_vscode").lazy_load()
 						end,
 					},
-					-- autopairing of (){}[] etcinit
-					{
-						"windwp/nvim-autopairs",
-						opts = {
-							fast_wrap = {
-								map = "<M-e>",
-								chars = { "{", "[", "(", '"', "'" },
-								pattern = string.gsub([[ [%'%"%)%>%]%}%,] ]], "%s+", ""),
-								offset = 0, -- Offset from pattern match
-								end_key = "$",
-								keys = "qwertzuiopasdfghjklxcvbnm",
-								check_comma = true,
-								highlight = "Search",
-								highlight_grey = "Comment",
-								enable_in_visualmode = true,
-							},
-							disable_filetype = { "TelescopePrompt", "vim" },
-						},
-						config = function(_, opts)
-							require("nvim-autopairs").setup(opts)
-							-- setup cmp for autopairs
-							local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-							require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-						end,
-					},
-					"saadparwaiz1/cmp_luasnip",
-					"hrsh7th/cmp-nvim-lsp",
-					"hrsh7th/cmp-path",
 				},
+				opts = {},
 			},
+			"folke/lazydev.nvim",
 		},
-		config = function()
-			require("configs.cmp")
+		opts = function()
+			return require("configs.blink")
 		end,
 	},
 
