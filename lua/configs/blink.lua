@@ -3,6 +3,8 @@ return {
 		preset = "enter",
 		["<S-Tab>"] = { "select_prev", "fallback" },
 		["<Tab>"] = { "select_next", "fallback" },
+		["<C-k>"] = { "scroll_documentation_up", "fallback" },
+		["<C-j>"] = { "scroll_documentation_down", "fallback" },
 	},
 
 	appearance = {
@@ -20,11 +22,13 @@ return {
 		},
 		menu = {
 			border = "rounded",
+			scrollbar = false,
 			winhighlight = "Normal:Normal,FloatBorder:BorderBG,CursorLine:PmenuSel,Search:None",
 			draw = {
 				columns = {
-					{ "label", "label_description" },
-					{ "kind_icon", "kind", gap = 2 },
+					{ "kind_icon" },
+					{ "label", "label_description", gap = 2 },
+					{ "kind" },
 				},
 			},
 		},
@@ -53,6 +57,7 @@ return {
 	signature = {
 		enabled = true,
 		window = {
+			scrollbar = false,
 			border = "rounded",
 			winhighlight = "Normal:Normal,FloatBorder:BorderBG,CursorLine:PmenuSel,Search:None",
 		},
