@@ -27,7 +27,6 @@ return {
 			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
-			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
 			"MeanderingProgrammer/render-markdown.nvim",
 			opts = {
@@ -141,6 +140,7 @@ return {
 		event = "VimEnter",
 		version = "1.*",
 		dependencies = {
+			"Kaiser-Yang/blink-cmp-avante",
 			-- Snippet Engine
 			{
 				"L3MON4D3/LuaSnip",

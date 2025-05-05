@@ -36,8 +36,13 @@ return {
 	},
 
 	sources = {
-		default = { "lsp", "path", "snippets", "lazydev" },
+		default = { "avante", "lsp", "path", "snippets", "lazydev" },
 		providers = {
+			avante = {
+				module = "blink-cmp-avante",
+				name = "Avante",
+				opts = {},
+			},
 			lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
 		},
 	},
