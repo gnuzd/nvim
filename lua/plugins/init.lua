@@ -24,15 +24,21 @@ return {
 		end,
 		build = "make",
 		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
 			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
+			"nvim-telescope/telescope.nvim",
+			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
-			"MeanderingProgrammer/render-markdown.nvim",
-			opts = {
-				file_types = { "markdown", "Avante" },
+			{
+				-- Make sure to set this up properly if you have lazy=true
+				"MeanderingProgrammer/render-markdown.nvim",
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
 			},
-			ft = { "markdown", "Avante" },
 		},
 	},
 
@@ -118,8 +124,7 @@ return {
 				},
 			},
 
-			-- "hrsh7th/cmp-nvim-lsp",
-			"saghen/blink.cmp",
+			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
 			require("configs.lsp")
@@ -136,12 +141,10 @@ return {
 	},
 
 	{ -- Autocompletion
-		"saghen/blink.cmp",
-		event = "VimEnter",
-		version = "1.*",
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
+		version = false,
 		dependencies = {
-			"Kaiser-Yang/blink-cmp-avante",
-			-- Snippet Engine
 			{
 				"L3MON4D3/LuaSnip",
 				version = "2.*",
@@ -155,16 +158,41 @@ return {
 							require("luasnip.loaders.from_vscode").lazy_load()
 						end,
 					},
+					-- autopairing of (){}[] etcinit
+					{
+						"windwp/nvim-autopairs",
+						opts = {
+							fast_wrap = {
+								map = "<M-e>",
+								chars = { "{", "[", "(", '"', "'" },
+								pattern = string.gsub([[ [%'%"%)%>%]%}%,] ]], "%s+", ""),
+								offset = 0, -- Offset from pattern match
+								end_key = "$",
+								keys = "qwertzuiopasdfghjklxcvbnm",
+								check_comma = true,
+								highlight = "Search",
+								highlight_grey = "Comment",
+								enable_in_visualmode = true,
+							},
+							disable_filetype = { "TelescopePrompt", "vim" },
+						},
+						config = function(_, opts)
+							require("nvim-autopairs").setup(opts)
+							-- setup cmp for autopairs
+							local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+							require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
+						end,
+					},
+					"saadparwaiz1/cmp_luasnip",
+					"hrsh7th/cmp-nvim-lsp",
+					"hrsh7th/cmp-path",
 				},
-				opts = {},
 			},
-			"folke/lazydev.nvim",
 		},
-		opts = function()
-			return require("configs.blink")
+		config = function()
+			require("configs.cmp")
 		end,
 	},
-
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -172,6 +200,12 @@ return {
 		opts = function()
 			return require("configs.treesitter")
 		end,
+	},
+
+	{ -- Auto pairs
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		opts = {},
 	},
 
 	{ -- Linting
