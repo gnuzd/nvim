@@ -239,8 +239,9 @@ return {
 			dashboard.section.buttons.val = {
 				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
 				dashboard.button("SPC s f", "󰈞  Find file"),
-				dashboard.button("SPC s h", "󰊄  Recently opened files"),
-				dashboard.button("SPC s g", "󰈬  Find word"),
+				dashboard.button("SPC s g", "󰊄  Live grep"),
+				dashboard.button("u", "  Update plugins", "<cmd>Lazy sync<CR>"),
+				dashboard.button("q", "󰅚  Quit", "<cmd>qa<CR>"),
 			}
 
 			return dashboard
