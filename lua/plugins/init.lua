@@ -1,5 +1,5 @@
 return {
-	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automaticaslly
 
 	{
 		"sainnhe/gruvbox-material",
@@ -234,9 +234,19 @@ return {
 
 	{
 		"goolord/alpha-nvim",
-		config = function()
-			local theta = require("configs.alpha").config
-			require("alpha").setup(theta)
+		opts = function()
+			local dashboard = require("alpha.themes.dashboard")
+			dashboard.section.buttons.val = {
+				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
+				dashboard.button("SPC s f", "󰈞  Find file"),
+				dashboard.button("SPC s h", "󰊄  Recently opened files"),
+				dashboard.button("SPC s g", "󰈬  Find word"),
+			}
+
+			return dashboard
+		end,
+		config = function(_, opts)
+			require("alpha").setup(opts.config)
 		end,
 	},
 
