@@ -21,6 +21,14 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 
 map({ "n", "i", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 
+map("n", "<leader>b", function()
+	if vim.g.disable_autoformat then
+		vim.cmd("FormatEnable")
+	else
+		vim.cmd("FormatDisable")
+	end
+end, { desc = "general toggle format on save" })
+
 -- bdelete
 map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 
