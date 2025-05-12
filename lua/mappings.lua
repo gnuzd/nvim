@@ -8,39 +8,25 @@ map("n", "<C-s>", "<cmd> w <cr>", { desc = "general save buffer" })
 map("n", "<C-a>", "ggVG", { desc = "general select all" })
 map("n", "D", vim.diagnostic.open_float, { desc = "general show diagnostic error messages" })
 map("n", "<Esc>", "<cmd>noh<cr>", { desc = "general clear highligh" })
-map("n", "<PageUp>", "^", { desc = "move to beginning of line" })
 
 map("n", "<C-h>", "<C-w>h", { desc = "switch window left" })
 map("n", "<C-l>", "<C-w>l", { desc = "switch window right" })
 map("n", "<C-j>", "<C-w>j", { desc = "switch window down" })
 map("n", "<C-k>", "<C-w>k", { desc = "switch window up" })
 
-map("n", "<leader>b", function()
-	if vim.g.disable_autoformat then
-		vim.cmd("FormatEnable")
-	else
-		vim.cmd("FormatDisable")
-	end
-end, { desc = "general toggle format on save" })
-
-map("i", "<PageUp>", "<ESC>^i", { desc = "general move beginning of line" })
 map("i", "<C-h>", "<Left>", { desc = "move left" })
 map("i", "<C-l>", "<Right>", { desc = "move right" })
 map("i", "<C-j>", "<Down>", { desc = "move down" })
 map("i", "<C-k>", "<Up>", { desc = "move up" })
 
-map("v", "<PageUp>", "^", { desc = "move to beginning of line" })
+map({ "n", "i", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 
 -- bdelete
 map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 
 -- comment
 map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })
-
 map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
-
--- gitsigns
-map("n", "<leader>gb", "<cmd> Gitsigns blame_line <cr>", { desc = "gitsigns blame line" })
 
 -- oil
 map("n", "\\", "<cmd> Oil <cr>", { desc = "oil open" })

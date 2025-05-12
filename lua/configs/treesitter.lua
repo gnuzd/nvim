@@ -1,12 +1,11 @@
-local treesitter = require("nvconfig").treesitter
-
+local ensure_installed = require("nvconfig").treessiter.ensure_installed
 return {
-	ensure_installed = treesitter.ensure_install,
-	auto_install = true,
-	highlight = {
-		enable = true,
-		use_languagetree = true,
-		additional_vim_regex_highlighting = { "ruby" },
-	},
-	indent = { enable = true, disable = { "ruby" } },
+  ensure_installed = ensure_installed,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    use_languagetree = true,
+  },
+
+  indent = { enable = true },
 }

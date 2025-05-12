@@ -1,4 +1,5 @@
 return {
+	defaults = { lazy = true },
 	performance = {
 		rtp = {
 			disabled_plugins = {

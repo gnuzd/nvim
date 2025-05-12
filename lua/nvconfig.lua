@@ -9,15 +9,6 @@ return {
 		prettierd = {},
 		-- solidity_ls_nomicfoundation = {},
 		tailwindcss = {},
-		cssls = {
-			settings = {
-				css = {
-					lint = {
-						unknownAtRules = "ignore",
-					},
-				},
-			},
-		},
 		lua_ls = {
 			settings = {
 				Lua = {
@@ -29,18 +20,16 @@ return {
 			},
 		},
 	},
+	mason = {
+		pkgs = { "lua_ls" },
+	},
 	treesitter = {
 		ensure_install = {
-			"diff",
-			"html",
 			"lua",
 			"luadoc",
-			"markdown",
-			"markdown_inline",
-			"query",
+			"printf",
 			"vim",
 			"vimdoc",
-			"css",
 			"graphql",
 			"javascript",
 			"typescript",

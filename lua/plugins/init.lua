@@ -1,5 +1,28 @@
 return {
+
+	"nvim-lua/plenary.nvim",
+	"nvim-tree/nvim-web-devicons",
+	"famiu/bufdelete.nvim",
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automaticaslly
+
+	{
+		"goolord/alpha-nvim",
+		opts = function()
+			local dashboard = require("alpha.themes.dashboard")
+			dashboard.section.buttons.val = {
+				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
+				dashboard.button("SPC s f", "󰈞  Find file"),
+				dashboard.button("SPC s g", "󰊄  Live grep"),
+				dashboard.button("u", "  Update plugins", "<cmd>Lazy sync<CR>"),
+				dashboard.button("q", "󰅚  Quit", "<cmd>qa<CR>"),
+			}
+
+			return dashboard
+		end,
+		config = function(_, opts)
+			require("alpha").setup(opts.config)
+		end,
+	},
 
 	{
 		"sainnhe/gruvbox-material",
@@ -15,81 +38,51 @@ return {
 	},
 
 	{
-		"yetone/avante.nvim",
-		event = "VeryLazy",
-		version = false,
-		lazy = false,
-		opts = function()
-			return require("configs.code")
-		end,
-		build = "make",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-telescope/telescope.nvim",
-			"hrsh7th/nvim-cmp",
-			"nvim-tree/nvim-web-devicons",
-			{
-				-- Make sure to set this up properly if you have lazy=true
-				"MeanderingProgrammer/render-markdown.nvim",
-				opts = {
-					file_types = { "markdown", "Avante" },
-				},
-				ft = { "markdown", "Avante" },
-			},
+		"lukas-reineke/indent-blankline.nvim",
+		event = "User FilePost",
+		main = "ibl",
+		opts = {
+			indent = { char = "┊" },
+			scope = { highlight = { "Normal" } },
 		},
 	},
 
-	{ -- Adds git related signs to the gutter, as well as utilities for managing changes
-		"lewis6991/gitsigns.nvim",
-		opts = {
-			signs = {
-				add = { text = "+" },
-				change = { text = "~" },
-				delete = { text = "_" },
-				topdelete = { text = "‾" },
-				changedelete = { text = "~" },
-			},
-		},
+	{
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("configs.oil")
+		end,
+	},
+
+	{
+		"nvim-lualine/lualine.nvim",
+		enabled = true,
+		event = "VimEnter",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("configs.lualine")
+		end,
 	},
 
 	{ -- Useful plugin to show you pending keybinds.
 		"folke/which-key.nvim",
-		event = "VimEnter", -- Sets the loading event to 'VimEnter'
 		opts = {},
 	},
 
-	{ -- Fuzzy Finder (files, lsp, etc)
-		"nvim-telescope/telescope.nvim",
-		event = "VimEnter",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			{ -- If encountering errors, see telescope-fzf-native README for installation instructions
-				"nvim-telescope/telescope-fzf-native.nvim",
-
-				-- `build` is used to run some command when the plugin is installed/updated.
-				-- This is only run then, not every time Neovim starts up.
-				build = "make",
-
-				-- `cond` is a condition used to determine whether this plugin should be
-				-- installed and loaded.
-				cond = function()
-					return vim.fn.executable("make") == 1
-				end,
-			},
-			{ "nvim-telescope/telescope-ui-select.nvim" },
-
-			-- Useful for getting pretty icons, but requires a Nerd Font.
-			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
-		},
-		config = function()
-			require("configs.telescope")
-		end,
+	{ -- formatting!
+		"stevearc/conform.nvim",
+		event = "BufWritePre",
+		opts = require("configs.conform"),
 	},
 
-	-- LSP Plugins
+	{ -- git stuff
+		"lewis6991/gitsigns.nvim",
+		event = "User FilePost",
+		opts = require("configs.gitsigns"),
+	},
+
+	-- lsp stuff
 	{
 		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
 		-- used for completion, annotations and signatures of Neovim apis
@@ -104,7 +97,6 @@ return {
 	},
 
 	{
-		-- Main LSP Configuration
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
@@ -113,7 +105,6 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-
 			-- Useful status updates for LSP.
 			{
 				"j-hui/fidget.nvim",
@@ -127,85 +118,73 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			require("configs.lsp")
+			require("configs.lsp").defaults()
 		end,
 	},
 
-	{ -- Autoformat
-		"stevearc/conform.nvim",
-		event = { "BufWritePre" },
-		cmd = { "ConformInfo" },
-		config = function()
-			return require("configs.conform")
-		end,
-	},
-
-	{ -- Autocompletion
+	{ -- load luasnips + cmp related in insert mode only
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
-		version = false,
 		dependencies = {
 			{
+				-- snippet plugin
 				"L3MON4D3/LuaSnip",
-				version = "2.*",
-				build = (function()
-					return "make install_jsregexp"
-				end)(),
-				dependencies = {
-					{
-						"rafamadriz/friendly-snippets",
-						config = function()
-							require("luasnip.loaders.from_vscode").lazy_load()
-						end,
-					},
-					-- autopairing of (){}[] etcinit
-					{
-						"windwp/nvim-autopairs",
-						opts = {
-							fast_wrap = {
-								map = "<M-e>",
-								chars = { "{", "[", "(", '"', "'" },
-								pattern = string.gsub([[ [%'%"%)%>%]%}%,] ]], "%s+", ""),
-								offset = 0, -- Offset from pattern match
-								end_key = "$",
-								keys = "qwertzuiopasdfghjklxcvbnm",
-								check_comma = true,
-								highlight = "Search",
-								highlight_grey = "Comment",
-								enable_in_visualmode = true,
-							},
-							disable_filetype = { "TelescopePrompt", "vim" },
-						},
-						config = function(_, opts)
-							require("nvim-autopairs").setup(opts)
-							-- setup cmp for autopairs
-							local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-							require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-						end,
-					},
-					"saadparwaiz1/cmp_luasnip",
-					"hrsh7th/cmp-nvim-lsp",
-					"hrsh7th/cmp-path",
+				dependencies = "rafamadriz/friendly-snippets",
+				opts = { history = true, updateevents = "TextChanged,TextChangedI" },
+				config = function(_, opts)
+					require("luasnip").config.set_config(opts)
+					require("configs.luasnip")
+				end,
+			},
+
+			-- autopairing of (){}[] etc
+			{
+				"windwp/nvim-autopairs",
+				opts = {
+					fast_wrap = {},
+					disable_filetype = { "TelescopePrompt", "vim" },
 				},
+				config = function(_, opts)
+					require("nvim-autopairs").setup(opts)
+
+					-- setup cmp for autopairs
+					local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+					require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
+				end,
+			},
+
+			-- cmp sources plugins
+			{
+				"saadparwaiz1/cmp_luasnip",
+				"hrsh7th/cmp-nvim-lua",
+				"hrsh7th/cmp-nvim-lsp",
+				"hrsh7th/cmp-buffer",
+				"hrsh7th/cmp-path",
 			},
 		},
-		config = function()
-			require("configs.cmp")
-		end,
-	},
-	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate",
-		main = "nvim-treesitter.configs",
 		opts = function()
-			return require("configs.treesitter")
+			return require("configs.cmp")
 		end,
 	},
 
-	{ -- Auto pairs
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		opts = {},
+	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		cmd = "Telescope",
+		opts = function()
+			return require("configs.telescope")
+		end,
+	},
+
+	{
+		"kevinhwang91/nvim-ufo",
+		event = "VeryLazy",
+		dependencies = {
+			"kevinhwang91/promise-async",
+		},
+		config = function()
+			require("configs.ufo")
+		end,
 	},
 
 	{ -- Linting
@@ -233,25 +212,73 @@ return {
 	},
 
 	{
-		"goolord/alpha-nvim",
-		opts = function()
-			local dashboard = require("alpha.themes.dashboard")
-			dashboard.section.buttons.val = {
-				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
-				dashboard.button("SPC s f", "󰈞  Find file"),
-				dashboard.button("SPC s g", "󰊄  Live grep"),
-				dashboard.button("u", "  Update plugins", "<cmd>Lazy sync<CR>"),
-				dashboard.button("q", "󰅚  Quit", "<cmd>qa<CR>"),
-			}
-
-			return dashboard
-		end,
-		config = function(_, opts)
-			require("alpha").setup(opts.config)
-		end,
+		"folke/todo-comments.nvim",
+		opts = { signs = false },
 	},
 
-	"famiu/bufdelete.nvim",
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {
+			position = "right",
+		},
+	},
+
+	{
+		"luckasRanarison/tailwind-tools.nvim",
+		event = "VimEnter",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim", -- optional
+			"neovim/nvim-lspconfig", -- optional
+		},
+		opts = {},
+	},
+
+	{
+		-- Make sure to set this up properly if you have lazy=true
+		"MeanderingProgrammer/render-markdown.nvim",
+		opts = {
+			file_types = { "markdown" },
+		},
+		ft = { "markdown" },
+	},
+
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		build = "cd app && yarn install",
+		init = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	},
+
+	-- { "rest-nvim/rest.nvim" },
+
+	-- IMPORTANT: need to install this `brew install libpq`
+	-- {
+	-- 	"kristijanhusak/vim-dadbod-ui",
+	-- 	dependencies = {
+	-- 		{ "tpope/vim-dadbod", lazy = true },
+	-- 		{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
+	-- 	},
+	-- 	cmd = {
+	-- 		"DBUI",
+	-- 		"DBUIToggle",
+	-- 		"DBUIAddConnection",
+	-- 		"DBUIFindBuffer",
+	-- 	},
+	-- 	keys = {
+	-- 		{ "<leader>e", ":DBUIToggle <CR>", desc = "dbui toggle", silent = true },
+	-- 	},
+	--
+	-- 	init = function()
+	-- 		vim.g.db_ui_use_nerd_fonts = 1
+	-- 	end,
+	-- },
 
 	{
 		"nvimtools/none-ls.nvim",
@@ -270,109 +297,5 @@ return {
 			)
 			table.insert(opts.sources, cspell.code_actions)
 		end,
-	},
-
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
-		opts = {
-			indent = { char = "┊" },
-			scope = { highlight = { "Normal" } },
-		},
-	},
-
-	{
-		"stevearc/oil.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("configs.oil")
-		end,
-	},
-
-	{
-		"nvim-lualine/lualine.nvim",
-		enabled = true,
-		event = "VimEnter",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("configs.lualine")
-		end,
-	},
-
-	{
-		"folke/ts-comments.nvim",
-		opts = {},
-		event = "VeryLazy",
-	},
-
-	{
-		"folke/todo-comments.nvim",
-		opts = { signs = false },
-	},
-
-	{
-		"folke/trouble.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			position = "right",
-		},
-	},
-
-	{
-		"kevinhwang91/nvim-ufo",
-		event = "VeryLazy",
-		dependencies = {
-			"kevinhwang91/promise-async",
-		},
-		config = function()
-			require("configs.ufo")
-		end,
-	},
-
-	{ "windwp/nvim-ts-autotag", opts = {} },
-	{
-		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		build = "cd app && yarn install",
-		init = function()
-			vim.g.mkdp_filetypes = { "markdown" }
-		end,
-		ft = { "markdown" },
-	},
-
-	{ "rest-nvim/rest.nvim" },
-
-	-- IMPORTANT: need to install this `brew install libpq`
-	{
-		"kristijanhusak/vim-dadbod-ui",
-		dependencies = {
-			{ "tpope/vim-dadbod", lazy = true },
-			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
-		},
-		cmd = {
-			"DBUI",
-			"DBUIToggle",
-			"DBUIAddConnection",
-			"DBUIFindBuffer",
-		},
-		keys = {
-			{ "<leader>e", ":DBUIToggle <CR>", desc = "dbui toggle", silent = true },
-		},
-
-		init = function()
-			vim.g.db_ui_use_nerd_fonts = 1
-		end,
-	},
-
-	{
-		"luckasRanarison/tailwind-tools.nvim",
-		name = "tailwind-tools",
-		build = ":UpdateRemotePlugins",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-telescope/telescope.nvim", -- optional
-			"neovim/nvim-lspconfig", -- optional
-		},
-		opts = {},
 	},
 }
