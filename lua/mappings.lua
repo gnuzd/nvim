@@ -36,6 +36,12 @@ map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })
 map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
 
+-- codecompanion
+map("n", "<leader>aa", "<cmd> CodeCompanionActions <cr>", { desc = "code actions" })
+
+-- gitsigns
+map("n", "<leader>gb", "<cmd> Gitsigns blame_line <cr>", { desc = "gitsigns blame line" })
+
 -- oil
 map("n", "\\", "<cmd> Oil <cr>", { desc = "oil open" })
 

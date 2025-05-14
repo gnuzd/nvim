@@ -20,11 +20,8 @@ return {
 			},
 		},
 	},
-	mason = {
-		pkgs = { "lua_ls" },
-	},
 	treesitter = {
-		ensure_install = {
+		ensure_installed = {
 			"lua",
 			"luadoc",
 			"printf",
@@ -33,6 +30,7 @@ return {
 			"graphql",
 			"javascript",
 			"typescript",
+			"svelte",
 		},
 	},
 }

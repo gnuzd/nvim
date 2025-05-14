@@ -77,7 +77,6 @@ return {
 
 	{ -- git stuff
 		"lewis6991/gitsigns.nvim",
-		event = "User FilePost",
 		opts = require("configs.gitsigns"),
 	},
 
@@ -167,6 +166,15 @@ return {
 	},
 
 	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		main = "nvim-treesitter.configs",
+		opts = function()
+			return require("configs.treesitter")
+		end,
+	},
+
+	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		cmd = "Telescope",
@@ -191,7 +199,13 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lint = require("lint")
-			lint.linters_by_ft = {}
+			lint.linters_by_ft = {
+				javascript = { "eslint_d" },
+				typescript = { "eslint_d" },
+				javascriptreact = { "eslint_d" },
+				typescriptreact = { "eslint_d" },
+				svelte = { "eslint_d" },
+			}
 
 			-- Create autocommand which carries out the actual linting
 			-- on the specified events.
@@ -208,6 +222,21 @@ return {
 				end,
 			})
 		end,
+	},
+
+	{
+		"olimorris/codecompanion.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"hrsh7th/nvim-cmp",
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				ft = { "markdown", "codecompanion" },
+			},
+		},
+		opts = require("configs.code"),
 	},
 
 	{
@@ -237,7 +266,6 @@ return {
 	},
 
 	{
-		-- Make sure to set this up properly if you have lazy=true
 		"MeanderingProgrammer/render-markdown.nvim",
 		opts = {
 			file_types = { "markdown" },
