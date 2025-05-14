@@ -20,17 +20,4 @@ return {
 			},
 		},
 	},
-	treesitter = {
-		ensure_installed = {
-			"lua",
-			"luadoc",
-			"printf",
-			"vim",
-			"vimdoc",
-			"graphql",
-			"javascript",
-			"typescript",
-			"svelte",
-		},
-	},
 }

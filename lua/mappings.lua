@@ -52,6 +52,7 @@ map("n", "<leader>sg", "<cmd> Telescope live_grep <cr>", { desc = "telescope liv
 
 -- trouble
 map("n", "<leader>ss", "<cmd> Trouble diagnostics <cr>", { desc = "trouble diagnostics loclist" })
+map("n", "<leader>sd", "<cmd> Trouble todo <cr>", { desc = "trouble todo" })
 
 -- whichkey
 map("n", "<leader>wK", "<cmd> WhichKey <cr>", { desc = "whichkey all keymaps" })
