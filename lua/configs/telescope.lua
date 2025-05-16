@@ -1,4 +1,4 @@
-return {
+require("telescope").setup({
 	defaults = {
 		prompt_prefix = "   ",
 		selection_caret = " ",
@@ -22,4 +22,6 @@ return {
 			require("telescope.themes").get_dropdown(),
 		},
 	},
-}
+})
+
+require("telescope").load_extension("ui-select")
