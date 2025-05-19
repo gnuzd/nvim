@@ -241,14 +241,19 @@ return {
 	},
 
 	{
-		"olimorris/codecompanion.nvim",
+		"azorng/goose.nvim",
+		config = function()
+			require("goose").setup({})
+		end,
 		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				opts = {
+					anti_conceal = { enabled = false },
+				},
+			},
 		},
-		opts = require("configs.code"),
 	},
 
 	{
