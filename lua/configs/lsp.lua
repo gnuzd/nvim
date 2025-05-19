@@ -127,7 +127,7 @@ M.defaults = function()
 	require("mason").setup()
 	local servers = require("nvconfig").lsp
 	local ensure_installed = vim.tbl_keys(servers or {})
-	vim.list_extend(ensure_installed, { "stylua", "cspell" })
+	vim.list_extend(ensure_installed, { "stylua", "cspell", "tree-sitter-cli" })
 	require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 	vim.api.nvim_create_autocmd("LspAttach", {
