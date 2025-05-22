@@ -97,10 +97,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			-- Automatically install LSPs and related tools to stdpath for Neovim
-			-- Mason must be loaded before its dependents so we need to set it up here.
-			-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-			"williamboman/mason.nvim",
+			{ "mason-org/mason.nvim", opts = {} },
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			-- Useful status updates for LSP.
@@ -271,13 +268,12 @@ return {
 
 	{
 		"luckasRanarison/tailwind-tools.nvim",
-		event = "VimEnter",
 		name = "tailwind-tools",
 		build = ":UpdateRemotePlugins",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
-			"nvim-telescope/telescope.nvim", -- optional
-			"neovim/nvim-lspconfig", -- optional
+			"nvim-telescope/telescope.nvim",
+			"neovim/nvim-lspconfig",
 		},
 		opts = {},
 	},

@@ -29,7 +29,7 @@ M.on_attach = function(event)
 	-- map("n", "<leader>ra", require "nvchad.lsp.renamer", opts "NvRenamer")
 
 	local client = vim.lsp.get_client_by_id(event.data.client_id)
-	if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
+	if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
 		local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 		vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 			buffer = event.buf,
@@ -56,7 +56,7 @@ M.on_attach = function(event)
 	-- code, if the language server you are using supports them
 	--
 	-- This may be unwanted, since they displace some of your code
-	if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+	if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
 		map("n", "<leader>th", function()
 			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 		end, opts("toggle inlay hints"))
@@ -70,7 +70,11 @@ M.on_init = function(client, _)
 	end
 end
 
-M.capabilities = vim.lsp.protocol.make_client_capabilities()
+M.capabilities = vim.tbl_deep_extend(
+	"force",
+	vim.lsp.protocol.make_client_capabilities(),
+	require("cmp_nvim_lsp").default_capabilities()
+)
 
 M.capabilities.textDocument.completion.completionItem = {
 	documentationFormat = { "markdown", "plaintext" },
@@ -127,36 +131,27 @@ M.defaults = function()
 	require("mason").setup()
 	local servers = require("nvconfig").lsp
 	local ensure_installed = vim.tbl_keys(servers or {})
-	vim.list_extend(ensure_installed, { "stylua", "cspell", "tree-sitter-cli" })
+	vim.list_extend(ensure_installed, { "stylua", "cspell", "tree-sitter-cli", "prettierd", "tailwindcss" })
 	require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 	vim.api.nvim_create_autocmd("LspAttach", {
+		group = vim.api.nvim_create_augroup("antbase-lsp-attach", { clear = true }),
 		callback = function(event)
 			M.on_attach(event)
 		end,
 	})
 
+	vim.lsp.config("*", { capabilities = M.capabilities, on_init = M.on_init })
+	for key, value in pairs(servers) do
+		vim.lsp.config(key, value)
+	end
+
 	require("mason-lspconfig").setup({
-		ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-		automatic_installation = false,
-		handlers = {
-			function(server_name)
-				local server = servers[server_name] or {}
-				-- This handles overriding only values explicitly passed
-				-- by the server configuration above. Useful when disabling
-				-- certain features of an LSP (for example, turning off formatting for ts_ls)
-				server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-				require("lspconfig")[server_name].setup(server)
-			end,
+		ensure_installed = {},
+		automatic_enable = {
+			exclude = { "tailwindcss" },
 		},
 	})
-
-	-- vim.lsp.config("*", { capabilities = M.capabilities, on_init = M.on_init })
-	--
-	-- for key, value in pairs(servers) do
-	-- 	vim.lsp.config(key, value)
-	-- 	vim.lsp.enable(key)
-	-- end
 end
 
 return M

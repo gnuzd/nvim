@@ -6,9 +6,8 @@ return {
 		ts_ls = {},
 		svelte = {},
 		eslint_d = {},
-		prettierd = {},
+		cssls = {},
 		-- solidity_ls_nomicfoundation = {},
-		tailwindcss = {},
 		lua_ls = {
 			settings = {
 				Lua = {
@@ -19,5 +18,8 @@ return {
 				},
 			},
 		},
+	},
+	treesister = {
+		ensure_installed = { "heex" },
 	},
 }
