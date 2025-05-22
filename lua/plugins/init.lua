@@ -266,6 +266,8 @@ return {
 		},
 	},
 
+	{ "windwp/nvim-ts-autotag", opts = {} },
+
 	{
 		"luckasRanarison/tailwind-tools.nvim",
 		name = "tailwind-tools",
@@ -283,7 +285,7 @@ return {
 		opts = {
 			file_types = { "markdown" },
 		},
-		ft = { "markdown", "codecompanion" },
+		ft = { "markdown" },
 	},
 
 	{
