@@ -100,15 +100,16 @@ return {
 			{ "mason-org/mason.nvim", opts = {} },
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
+
 			-- Useful status updates for LSP.
-			{
-				"j-hui/fidget.nvim",
-				opts = {
-					progress = {
-						ignore = { "null-ls" },
-					},
-				},
-			},
+			-- {
+			-- 	"j-hui/fidget.nvim",
+			-- 	opts = {
+			-- 		progress = {
+			-- 			ignore = { "null-ls" },
+			-- 		},
+			-- 	},
+			-- },
 
 			"hrsh7th/cmp-nvim-lsp",
 		},
@@ -298,6 +299,17 @@ return {
 		ft = { "markdown" },
 	},
 
+	{ "echasnovski/mini.diff", version = "*" },
+
+	{
+		"j-hui/fidget.nvim",
+		opts = {
+			progress = {
+				ignore = { "null-ls" },
+			},
+		},
+	},
+
 	-- { "rest-nvim/rest.nvim" },
 
 	-- IMPORTANT: need to install this `brew install libpq`
@@ -324,7 +336,6 @@ return {
 
 	{
 		"nvimtools/none-ls.nvim",
-		event = "VeryLazy",
 		dependencies = { "davidmh/cspell.nvim" },
 		opts = function(_, opts)
 			local cspell = require("cspell")
@@ -333,7 +344,7 @@ return {
 				opts.sources,
 				cspell.diagnostics.with({
 					diagnostics_postprocess = function(diagnostic)
-						diagnostic.severity = vim.diagnostic.severity.HINT
+						diagnostic.severity = vim.diagnostic.severity.WARN
 					end,
 				})
 			)
