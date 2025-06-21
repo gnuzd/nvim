@@ -351,4 +351,14 @@ return {
 			table.insert(opts.sources, cspell.code_actions)
 		end,
 	},
+
+	{
+		"nvzone/floaterm",
+		dependencies = "nvzone/volt",
+		opts = {},
+		cmd = "FloatermToggle",
+		keys = {
+			{ "<leader>ft", "<cmd> FloatermToggle <cr>", desc = "Toggle Float Term" },
+		},
+	},
 }
