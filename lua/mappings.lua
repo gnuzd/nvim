@@ -19,7 +19,8 @@ map("i", "<C-l>", "<Right>", { desc = "move right" })
 map("i", "<C-j>", "<Down>", { desc = "move down" })
 map("i", "<C-k>", "<Up>", { desc = "move up" })
 
-map({ "n", "i", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
+map({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
+map("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
 
 map("n", "<leader>b", function()
 	if vim.g.disable_autoformat then

@@ -100,17 +100,6 @@ return {
 			{ "mason-org/mason.nvim", opts = {} },
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
-
-			-- Useful status updates for LSP.
-			-- {
-			-- 	"j-hui/fidget.nvim",
-			-- 	opts = {
-			-- 		progress = {
-			-- 			ignore = { "null-ls" },
-			-- 		},
-			-- 	},
-			-- },
-
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
@@ -304,6 +293,13 @@ return {
 	{
 		"j-hui/fidget.nvim",
 		opts = {
+			notification = {
+				override_vim_notify = true,
+				window = {
+					border = "rounded",
+					winblend = 0,
+				},
+			},
 			progress = {
 				ignore = { "null-ls" },
 			},
