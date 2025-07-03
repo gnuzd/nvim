@@ -22,6 +22,7 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 map({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 map("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
 
+-- conform
 map("n", "<leader>b", function()
 	if vim.g.disable_autoformat then
 		vim.cmd("FormatEnable")
@@ -37,14 +38,11 @@ map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })
 map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
 
--- codecompanion
-map("n", "<leader>aa", "<cmd> CodeCompanionActions <cr>", { desc = "code actions" })
+-- neotree
+map({ "n", "v" }, "\\", ":Neotree toggle<CR>", { desc = "NeoTree toggle", silent = true })
 
 -- gitsigns
 map("n", "<leader>gb", "<cmd> Gitsigns blame_line <cr>", { desc = "gitsigns blame line" })
-
--- oil
-map("n", "\\", "<cmd> Oil <cr>", { desc = "oil open" })
 
 -- telescope
 map("n", "<leader><space>", "<cmd> Telescope buffers <cr>", { desc = "telescope find buffers" })
