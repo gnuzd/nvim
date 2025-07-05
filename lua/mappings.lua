@@ -22,6 +22,12 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 map({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 map("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
 
+-- bdelete
+map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
+
+-- neotree
+map({ "n", "v" }, "\\", ":Neotree toggle<CR>", { desc = "NeoTree toggle", silent = true })
+
 -- conform
 map("n", "<leader>b", function()
 	if vim.g.disable_autoformat then
@@ -30,16 +36,6 @@ map("n", "<leader>b", function()
 		vim.cmd("FormatDisable")
 	end
 end, { desc = "general toggle format on save" })
-
--- bdelete
-map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
-
--- comment
-map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })
-map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
-
--- neotree
-map({ "n", "v" }, "\\", ":Neotree toggle<CR>", { desc = "NeoTree toggle", silent = true })
 
 -- gitsigns
 map("n", "<leader>gb", "<cmd> Gitsigns blame_line <cr>", { desc = "gitsigns blame line" })

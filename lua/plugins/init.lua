@@ -1,27 +1,6 @@
 return {
-	"nvim-lua/plenary.nvim",
-	"nvim-tree/nvim-web-devicons",
 	"famiu/bufdelete.nvim",
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automaticaslly
-
-	{
-		"goolord/alpha-nvim",
-		opts = function()
-			local dashboard = require("alpha.themes.dashboard")
-			dashboard.section.buttons.val = {
-				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
-				dashboard.button("SPC s f", "󰈞  Find file"),
-				dashboard.button("SPC s g", "󰊄  Live grep"),
-				dashboard.button("u", "  Update plugins", "<cmd>Lazy sync<CR>"),
-				dashboard.button("q", "󰅚  Quit", "<cmd>qa<CR>"),
-			}
-
-			return dashboard
-		end,
-		config = function(_, opts)
-			require("alpha").setup(opts.config)
-		end,
-	},
 
 	{
 		"sainnhe/gruvbox-material",
@@ -37,16 +16,6 @@ return {
 	},
 
 	{
-		"lukas-reineke/indent-blankline.nvim",
-		event = "VimEnter",
-		main = "ibl",
-		opts = {
-			indent = { char = "┊" },
-			scope = { highlight = { "Normal" } },
-		},
-	},
-
-	{
 		"akinsho/bufferline.nvim",
 		version = "*",
 		dependencies = "nvim-tree/nvim-web-devicons",
@@ -56,18 +25,29 @@ return {
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",
-		dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
 		opts = require("configs.neotree"),
 	},
 
 	{
 		"nvim-lualine/lualine.nvim",
-		enabled = true,
-		event = "VimEnter",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("configs.lualine")
 		end,
+	},
+
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
+		opts = {
+			indent = { char = "┊" },
+			scope = { highlight = { "Normal" } },
+		},
 	},
 
 	{ -- Useful plugin to show you pending keybinds.
@@ -86,15 +66,29 @@ return {
 		opts = require("configs.gitsigns"),
 	},
 
+	{
+		"j-hui/fidget.nvim",
+		opts = {
+			notification = {
+				override_vim_notify = true,
+				window = {
+					border = "rounded",
+					winblend = 0,
+				},
+			},
+			progress = {
+				ignore = { "null-ls" },
+			},
+		},
+	},
+
 	-- lsp stuff
 	{
-		-- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
-		-- used for completion, annotations and signatures of Neovim apis
+
 		"folke/lazydev.nvim",
 		ft = "lua",
 		opts = {
 			library = {
-				-- Load luvit types when the `vim.uv` word is found
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 			},
 		},
@@ -162,9 +156,7 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		main = "nvim-treesitter.configs",
-		opts = function()
-			return require("configs.treesitter")
-		end,
+		opts = require("configs.treesitter"),
 	},
 
 	{
@@ -187,6 +179,25 @@ return {
 	},
 
 	{
+		"goolord/alpha-nvim",
+		opts = function()
+			local dashboard = require("alpha.themes.dashboard")
+			dashboard.section.buttons.val = {
+				dashboard.button("e", "  New file", "<cmd>ene <CR>"),
+				dashboard.button("SPC s f", "󰈞  Find file"),
+				dashboard.button("SPC s g", "󰊄  Live grep"),
+				dashboard.button("u", "  Update plugins", "<cmd>Lazy sync<CR>"),
+				dashboard.button("q", "󰅚  Quit", "<cmd>qa<CR>"),
+			}
+
+			return dashboard
+		end,
+		config = function(_, opts)
+			require("alpha").setup(opts.config)
+		end,
+	},
+
+	{
 		"kevinhwang91/nvim-ufo",
 		event = "VeryLazy",
 		dependencies = {
@@ -201,29 +212,7 @@ return {
 		"mfussenegger/nvim-lint",
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
-			local lint = require("lint")
-			lint.linters_by_ft = {
-				javascript = { "eslint_d" },
-				typescript = { "eslint_d" },
-				javascriptreact = { "eslint_d" },
-				typescriptreact = { "eslint_d" },
-				svelte = { "eslint_d" },
-			}
-
-			-- Create autocommand which carries out the actual linting
-			-- on the specified events.
-			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
-			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
-				group = lint_augroup,
-				callback = function()
-					-- Only run the linter in buffers that you can modify in order to
-					-- avoid superfluous noise, notably within the handy LSP pop-ups that
-					-- describe the hovered symbol using Markdown.
-					if vim.opt_local.modifiable:get() then
-						lint.try_lint()
-					end
-				end,
-			})
+			require("configs.lint")
 		end,
 	},
 
@@ -270,77 +259,17 @@ return {
 		ft = { "markdown" },
 	},
 
-	{ "echasnovski/mini.diff", version = "*" },
-
-	{
-		"j-hui/fidget.nvim",
-		opts = {
-			notification = {
-				override_vim_notify = true,
-				window = {
-					border = "rounded",
-					winblend = 0,
-				},
-			},
-			progress = {
-				ignore = { "null-ls" },
-			},
-		},
-	},
-
-	-- { "rest-nvim/rest.nvim" },
-
-	-- IMPORTANT: need to install this `brew install libpq`
-	-- {
-	-- 	"kristijanhusak/vim-dadbod-ui",
-	-- 	dependencies = {
-	-- 		{ "tpope/vim-dadbod", lazy = true },
-	-- 		{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
-	-- 	},
-	-- 	cmd = {
-	-- 		"DBUI",
-	-- 		"DBUIToggle",
-	-- 		"DBUIAddConnection",
-	-- 		"DBUIFindBuffer",
-	-- 	},
-	-- 	keys = {
-	-- 		{ "<leader>e", ":DBUIToggle <CR>", desc = "dbui toggle", silent = true },
-	-- 	},
-	--
-	-- 	init = function()
-	-- 		vim.g.db_ui_use_nerd_fonts = 1
-	-- 	end,
-	-- },
-
-	{
-		"nvimtools/none-ls.nvim",
-		dependencies = { "davidmh/cspell.nvim" },
-		opts = function(_, opts)
-			local cspell = require("cspell")
-			opts.sources = opts.sources or {}
-			table.insert(
-				opts.sources,
-				cspell.diagnostics.with({
-					diagnostics_postprocess = function(diagnostic)
-						diagnostic.severity = vim.diagnostic.severity.WARN
-					end,
-				})
-			)
-			table.insert(opts.sources, cspell.code_actions)
-		end,
-	},
-
 	{
 		"nvzone/floaterm",
+		cmd = "FloatermToggle",
 		dependencies = "nvzone/volt",
 		opts = {
 			mappings = {
-				term = function(buf)
+				term = function()
 					vim.keymap.set("t", "<C-/>", "<C-\\><C-n>", { silent = true })
 				end,
 			},
 		},
-		cmd = "FloatermToggle",
 		keys = {
 			{ "<C-/>", "<cmd> FloatermToggle <cr>", desc = "Toggle Float Term" },
 		},
