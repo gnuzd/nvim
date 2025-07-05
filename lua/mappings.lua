@@ -12,6 +12,15 @@ map({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 map("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
 map({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 
+-- conform
+map("n", "<leader>b", function()
+  if vim.g.disable_autoformat then
+    vim.cmd "FormatEnable"
+  else
+    vim.cmd "FormatDisable"
+  end
+end, { desc = "general toggle format on save" })
+
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 map("n", "\\", "<cmd>NvimTreeFocus<CR>")
 
@@ -23,4 +32,3 @@ map("n", "<leader>sg", "<cmd> Telescope live_grep <cr>", { desc = "telescope liv
 -- trouble
 map("n", "<leader>ss", "<cmd> Trouble diagnostics <cr>", { desc = "trouble diagnostics loclist" })
 map("n", "<leader>sd", "<cmd> Trouble todo <cr>", { desc = "trouble todo" })
-
