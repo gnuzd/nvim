@@ -25,6 +25,10 @@ map("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
 -- bdelete
 map("n", "<leader>x", "<cmd> bd <cr>", { desc = "bdelete close buffer" })
 
+-- comment
+map("n", "<leader>/", "gcc", { desc = "comment or uncomment", remap = true })
+map("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = true })
+
 -- neotree
 map({ "n", "v" }, "\\", ":Neotree toggle<CR>", { desc = "NeoTree toggle", silent = true })
 
