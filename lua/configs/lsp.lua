@@ -125,7 +125,7 @@ M.diagnostic_config = function()
 	})
 end
 
-M.defaults = function()
+M.setup = function()
 	M.diagnostic_config()
 
 	local cfg = require("nvconfig")
@@ -150,9 +150,6 @@ M.defaults = function()
 
 	require("mason-lspconfig").setup({
 		ensure_installed = {},
-		automatic_enable = {
-			exclude = { "tailwindcss" },
-		},
 	})
 end
 

@@ -6,7 +6,10 @@ local g = vim.g
 o.laststatus = 3
 o.showmode = false
 
-o.clipboard = "unnamedplus"
+vim.schedule(function()
+	vim.o.clipboard = "unnamedplus"
+end)
+
 o.cursorline = true
 o.cursorlineopt = "number"
 
@@ -44,3 +47,13 @@ o.timeoutlen = 400
 o.undofile = true
 
 o.termguicolors = true
+
+-------------------------------------- autocmd ------------------------------------------
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.hl.on_yank()
+	end,
+})

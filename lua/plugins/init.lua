@@ -1,4 +1,6 @@
 return {
+	"nvim-lua/plenary.nvim",
+
 	{
 		"sainnhe/gruvbox-material",
 		priority = 1000,
@@ -14,15 +16,6 @@ return {
 
 	"folke/which-key.nvim",
 
-	{
-		"nvim-telescope/telescope.nvim",
-		tag = "0.1.8",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("configs.telescope")
-		end,
-	},
-
 	{ -- formatting!
 		"stevearc/conform.nvim",
 		event = "BufWritePre",
@@ -34,18 +27,7 @@ return {
 		opts = require("configs.gitsigns"),
 	},
 
-	-- lsp stuff
-	{
-
-		"folke/lazydev.nvim",
-		ft = "lua",
-		opts = {
-			library = {
-				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-			},
-		},
-	},
-
+	-- nvim-lspconfig and cmp configuration
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
@@ -55,13 +37,14 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			require("configs.lsp").defaults()
+			require("configs.lsp").setup()
 		end,
 	},
 
-	{ -- load luasnips + cmp related in insert mode only
+	-- nvim-cmp for autocompletion
+	{
 		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
+		event = "InsertEnter", -- Load only when entering Insert mode
 		dependencies = {
 			{
 				-- snippet plugin
@@ -74,40 +57,40 @@ return {
 				end,
 			},
 
-			-- autopairing of (){}[] etc
-			{
-				"windwp/nvim-autopairs",
-				opts = {
-					fast_wrap = {},
-					disable_filetype = { "TelescopePrompt", "vim" },
-				},
-				config = function(_, opts)
-					require("nvim-autopairs").setup(opts)
-
-					-- setup cmp for autopairs
-					local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-					require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
-				end,
-			},
-
-			-- cmp sources plugins
-			{
-				"saadparwaiz1/cmp_luasnip",
-				"hrsh7th/cmp-nvim-lua",
-				"hrsh7th/cmp-nvim-lsp",
-				"hrsh7th/cmp-buffer",
-				"hrsh7th/cmp-path",
-			},
+			"saadparwaiz1/cmp_luasnip",
+			"hrsh7th/cmp-nvim-lua",
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"onsails/lspkind.nvim",
 
 			{
 				"jdrupal-dev/css-vars.nvim",
 				opts = {
-					-- If you use CSS-in-JS, you can add the autocompletion to JS/TS files.
-					cmp_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-					-- WARNING: The search is not optimized to look for variables in JS files.
-					-- If you change the search_extensions you might get false positives and weird completion results.
-					search_extensions = { ".js", ".ts", ".jsx", ".tsx" },
+					cmp_filetypes = {
+						"javascript",
+						"javascriptreact",
+						"typescript",
+						"typescriptreact",
+						"css",
+						"svelte",
+					},
+					search_pattern = {
+						default = [[^\s*--[a-zA-Z0-9_-]+]],
+						css = [[^\s*--[a-zA-Z0-9_-]+]],
+						svelte = [[^\s*--[a-zA-Z0-9_-]+]],
+					},
+					-- Explicitly tell the plugin to search in .svelte files
+					search_extensions = {
+						".css",
+						".svelte",
+					},
 				},
+			},
+
+			{
+				"Jezda1337/nvim-html-css",
+				dependencies = { "nvim-treesitter/nvim-treesitter" },
 			},
 		},
 		opts = function()
@@ -117,9 +100,12 @@ return {
 
 	{
 		"nvim-treesitter/nvim-treesitter",
+		event = "BufEnter",
 		build = ":TSUpdate",
-		main = "nvim-treesitter.configs",
-		opts = require("configs.treesitter"),
+		branch = "master",
+		config = function()
+			return require("configs.treesitter")
+		end,
 	},
 
 	{
@@ -155,18 +141,6 @@ return {
 	},
 
 	{
-		"luckasRanarison/tailwind-tools.nvim",
-		name = "tailwind-tools",
-		build = ":UpdateRemotePlugins",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-telescope/telescope.nvim",
-			"neovim/nvim-lspconfig",
-		},
-		opts = {},
-	},
-
-	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		opts = {
 			file_types = { "markdown" },
@@ -182,5 +156,59 @@ return {
 			vim.g.mkdp_filetypes = { "markdown" }
 		end,
 		ft = { "markdown" },
+	},
+
+	{
+		"folke/snacks.nvim",
+		opts = {
+			bigfile = { enabled = true },
+			dashboard = { enabled = true },
+			explorer = { enabled = true },
+			indent = { enabled = true, char = "┊" },
+			input = { enabled = true },
+			picker = {
+				enabled = true,
+				win = {
+					input = {
+						keys = {
+							["<S-Tab>"] = { "list_up", mode = { "i", "n" } },
+							["<Tab>"] = { "list_down", mode = { "i", "n" } },
+						},
+					},
+				},
+				sources = {
+					explorer = {
+						auto_close = true,
+					},
+				},
+			},
+			notifier = { enabled = true },
+			quickfile = { enabled = true },
+			scope = { enabled = true },
+			scroll = { enabled = true },
+			statuscolumn = { enabled = true },
+			words = { enabled = true },
+		},
+	},
+
+	-- mini
+	{
+		"nvim-mini/mini.nvim",
+		version = "*",
+		config = function()
+			require("mini.ai").setup({})
+			require("mini.comment").setup({})
+			require("mini.diff").setup({})
+			require("mini.pairs").setup({})
+		end,
+	},
+
+	-- The auto-tagging plugin
+	{
+		"windwp/nvim-ts-autotag",
+		event = "InsertEnter",
+		config = function()
+			require("nvim-ts-autotag").setup()
+		end,
 	},
 }
