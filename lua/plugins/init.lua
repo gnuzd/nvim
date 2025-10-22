@@ -175,10 +175,11 @@ return {
 							["<Tab>"] = { "list_down", mode = { "i", "n" } },
 						},
 					},
-				},
-				sources = {
-					explorer = {
-						auto_close = true,
+					list = {
+						keys = {
+							["<S-Tab>"] = { "list_up", mode = { "i", "n" } },
+							["<Tab>"] = { "list_down", mode = { "i", "n" } },
+						},
 					},
 				},
 			},
