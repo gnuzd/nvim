@@ -27,6 +27,13 @@ return {
 		opts = require("configs.gitsigns"),
 	},
 
+	{
+		"akinsho/git-conflict.nvim",
+		config = function()
+			require("git-conflict").setup()
+		end,
+	},
+
 	-- nvim-lspconfig and cmp configuration
 	{
 		"neovim/nvim-lspconfig",
@@ -151,7 +158,7 @@ return {
 	{
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		build = "cd app && yarn install",
+		build = "cd app && bun install",
 		init = function()
 			vim.g.mkdp_filetypes = { "markdown" }
 		end,
@@ -162,9 +169,9 @@ return {
 		"folke/snacks.nvim",
 		opts = {
 			bigfile = { enabled = true },
-			dashboard = { enabled = true },
+			dashboard = { enabled = false },
 			explorer = { enabled = true },
-			indent = { enabled = true, char = "┊" },
+			indent = { enabled = false },
 			input = { enabled = true },
 			picker = {
 				enabled = true,
@@ -198,8 +205,7 @@ return {
 		version = "*",
 		config = function()
 			require("mini.ai").setup({})
-			require("mini.comment").setup({})
-			require("mini.diff").setup({})
+			require("mini.indentscope").setup({ symbol = "┊" })
 			require("mini.pairs").setup({})
 		end,
 	},
@@ -211,5 +217,21 @@ return {
 		config = function()
 			require("nvim-ts-autotag").setup()
 		end,
+	},
+
+	{
+		"azorng/goose.nvim",
+		config = function()
+			require("goose").setup({})
+		end,
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				opts = {
+					anti_conceal = { enabled = false },
+				},
+			},
+		},
 	},
 }

@@ -7,26 +7,11 @@ M.on_attach = function(event)
 		return { buffer = event.buf, desc = "LSP " .. desc }
 	end
 
-	-- map("n", "<leader>D", require("telescope.builtin").lsp_type_definitions, opts("type definition"))
-
 	map("n", "K", function()
 		vim.lsp.buf.hover({ border = "rounded", max_height = 50, max_width = 120 })
 	end, opts("hover document"))
 
-	-- map("n", "<leader>ds", require("telescope.builtin").lsp_document_symbols, opts("document symbols"))
 	map({ "n", "x" }, "<leader>ca", vim.lsp.buf.code_action, opts("code action"))
-
-	-- map("n", "gD", vim.lsp.buf.declaration, opts("Go to declaration"))
-	-- map("n", "gd", vim.lsp.buf.definition, opts("Go to definition"))
-	-- map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts("Add workspace folder"))
-	-- map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts("Remove workspace folder"))
-	--
-	-- map("n", "<leader>wl", function()
-	-- 	print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-	-- end, opts("List workspace folders"))
-	--
-	-- map("n", "<leader>D", vim.lsp.buf.type_definition, opts("Go to type definition"))
-	-- map("n", "<leader>ra", require "nvchad.lsp.renamer", opts "NvRenamer")
 
 	local client = vim.lsp.get_client_by_id(event.data.client_id)
 	if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then

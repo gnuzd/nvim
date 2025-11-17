@@ -14,9 +14,6 @@ local function border(hl_name)
 end
 
 local options = {
-	performance = {
-		max_view_entries = 10,
-	},
 	formatting = {
 		format = function(entry, item)
 			local icons = require("configs.icons")

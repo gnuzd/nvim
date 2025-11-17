@@ -5,8 +5,8 @@ M.mason = {
 }
 
 M.lsp = {
-	-- elixirls = {},
-	-- rust_analyzer = {},
+	elixirls = {},
+	rust_analyzer = {},
 	jsonls = {},
 	vtsls = {},
 	svelte = {},
