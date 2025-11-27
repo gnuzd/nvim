@@ -151,6 +151,28 @@ later(function()
 			return { timeout_ms = 500, lsp_format = true }
 		end,
 	})
+
+	vim.api.nvim_create_user_command("FormatDisable", function(args)
+		if args.bang then
+			-- FormatDisable! will disable formatting just for this buffer
+			vim.b.disable_autoformat = true
+		else
+			vim.g.disable_autoformat = true
+		end
+	end, { desc = "Disable autoformat-on-save", bang = true })
+
+	vim.api.nvim_create_user_command("FormatEnable", function()
+		vim.b.disable_autoformat = false
+		vim.g.disable_autoformat = false
+	end, { desc = "Re-enable autoformat-on-save" })
+
+	vim.keymap.set("n", "<leader>b", function()
+		if vim.g.disable_autoformat then
+			vim.cmd("FormatEnable")
+		else
+			vim.cmd("FormatDisable")
+		end
+	end, { desc = "general toggle format on save" })
 end)
 
 -- Snippets ===================================================================
@@ -181,6 +203,11 @@ later(function()
 			require("lint").try_lint()
 		end,
 	})
+end)
+
+later(function()
+	add("windwp/nvim-ts-autotag")
+	require("nvim-ts-autotag").setup()
 end)
 
 -- Honorable mentions =========================================================
@@ -222,11 +249,13 @@ end)
 -- enabled in 'plugin/30_mini.lua' or other suggested 'mini.hues' based ones.
 MiniDeps.now(function()
 	-- Install only those that you need
-	add("sainnhe/everforest")
-	add("Shatur/neovim-ayu")
-	add("ellisonleao/gruvbox.nvim")
-	add("catppuccin/nvim")
+	add("sainnhe/gruvbox-material")
 
 	-- Enable only one
-	vim.cmd("color catppuccin-mocha")
+	vim.g.gruvbox_material_better_performance = 1
+	vim.g.gruvbox_material_transparent_background = 2
+	vim.g.gruvbox_material_background = "soft"
+	vim.cmd.colorscheme("gruvbox-material")
+	vim.api.nvim_set_hl(0, "FloatBorder", { bg = "" })
+	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "" })
 end)

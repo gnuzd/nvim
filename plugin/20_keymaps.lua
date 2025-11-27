@@ -10,14 +10,14 @@
 
 -- An example helper to create a Normal mode mapping
 local nmap = function(lhs, rhs, desc)
-  -- See `:h vim.keymap.set()`
-  vim.keymap.set('n', lhs, rhs, { desc = desc })
+	-- See `:h vim.keymap.set()`
+	vim.keymap.set("n", lhs, rhs, { desc = desc })
 end
 
 -- Paste linewise before/after current line
 -- Usage: `yiw` to yank a word and `]p` to put it on the next line.
-nmap('[p', '<Cmd>exe "put! " . v:register<CR>', 'Paste Above')
-nmap(']p', '<Cmd>exe "put "  . v:register<CR>', 'Paste Below')
+nmap("[p", '<Cmd>exe "put! " . v:register<CR>', "Paste Above")
+nmap("]p", '<Cmd>exe "put "  . v:register<CR>', "Paste Below")
 
 -- Many general mappings are created by 'mini.basics'. See 'plugin/30_mini.lua'
 
@@ -252,6 +252,11 @@ vim.keymap.set("v", "<leader>/", "gc", { desc = "comment or uncomment", remap = 
 
 vim.keymap.set({ "n", "v" }, "<PageUp>", "^", { desc = "move to beginning of line" })
 vim.keymap.set("i", "<PageUp>", "<ESC>^", { desc = "move to beginning of line" })
+
+vim.keymap.set("n", "<Tab>", "<cmd> bn <cr>", { desc = "move next buff" })
+vim.keymap.set("n", "<S-Tab>", "<cmd> bp <cr>", { desc = "move prev buff" })
+
+vim.keymap.set("i", "jj", "<ESC>", { desc = "exit insert mode" })
 
 vim.schedule(function()
 	vim.o.clipboard = "unnamedplus"
