@@ -152,7 +152,7 @@ return {
 		opts = {
 			file_types = { "markdown" },
 		},
-		ft = { "markdown" },
+		ft = { "markdown", "codecompanion" },
 	},
 
 	{
@@ -220,16 +220,35 @@ return {
 	},
 
 	{
-		"azorng/goose.nvim",
-		config = function()
-			require("goose").setup({})
-		end,
+		"olimorris/codecompanion.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			{
-				"MeanderingProgrammer/render-markdown.nvim",
-				opts = {
-					anti_conceal = { enabled = false },
+			"nvim-treesitter/nvim-treesitter",
+			"ravitemer/mcphub.nvim",
+			"lalitmee/codecompanion-spinners.nvim",
+		},
+		opts = {
+			display = {
+				notifications = true, -- Must be true for status to show via Fidget
+			},
+			adapters = {
+				gemini_cli = function()
+					return require("codecompanion.adapters").extend("gemini_cli", {
+						command = { "gemini", "--experimental-acp" }, -- Enables Agent Client Protocol
+					})
+				end,
+			},
+			strategies = {
+				-- Set gemini_cli as the preferred adapter for chat or agents
+				chat = { adapter = "gemini_cli" },
+				inline = { adapter = "gemini_cli" },
+				agent = { adapter = "gemini_cli" },
+			},
+			extensions = {
+				spinner = {
+					opts = {
+						style = "snacks",
+					},
 				},
 			},
 		},
