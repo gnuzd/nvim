@@ -50,34 +50,12 @@ end
 
 -- disable semanticTokens
 M.on_init = function(client, _)
-	if client.supports_method("textDocument/semanticTokens") then
+	if client.supports_method(vim.lsp.protocol.Methods.textDocument_semanticTokens) then
 		client.server_capabilities.semanticTokensProvider = nil
 	end
 end
 
-M.capabilities = vim.tbl_deep_extend(
-	"force",
-	vim.lsp.protocol.make_client_capabilities(),
-	require("cmp_nvim_lsp").default_capabilities()
-)
-
-M.capabilities.textDocument.completion.completionItem = {
-	documentationFormat = { "markdown", "plaintext" },
-	snippetSupport = true,
-	preselectSupport = true,
-	insertReplaceSupport = true,
-	labelDetailsSupport = true,
-	deprecatedSupport = true,
-	commitCharactersSupport = true,
-	tagSupport = { valueSet = { 1 } },
-	resolveSupport = {
-		properties = {
-			"documentation",
-			"detail",
-			"additionalTextEdits",
-		},
-	},
-}
+M.capabilities = {}
 
 M.diagnostic_config = function()
 	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
@@ -98,13 +76,7 @@ M.diagnostic_config = function()
 			source = "if_many",
 			spacing = 2,
 			format = function(diagnostic)
-				local diagnostic_message = {
-					[vim.diagnostic.severity.ERROR] = diagnostic.message,
-					[vim.diagnostic.severity.WARN] = diagnostic.message,
-					[vim.diagnostic.severity.INFO] = diagnostic.message,
-					[vim.diagnostic.severity.HINT] = diagnostic.message,
-				}
-				return diagnostic_message[diagnostic.severity]
+				return diagnostic.message
 			end,
 		},
 	})
@@ -112,6 +84,29 @@ end
 
 M.setup = function()
 	M.diagnostic_config()
+
+	M.capabilities = vim.tbl_deep_extend(
+		"force",
+		vim.lsp.protocol.make_client_capabilities(),
+		require("cmp_nvim_lsp").default_capabilities()
+	)
+	M.capabilities.textDocument.completion.completionItem = {
+		documentationFormat = { "markdown", "plaintext" },
+		snippetSupport = true,
+		preselectSupport = true,
+		insertReplaceSupport = true,
+		labelDetailsSupport = true,
+		deprecatedSupport = true,
+		commitCharactersSupport = true,
+		tagSupport = { valueSet = { 1 } },
+		resolveSupport = {
+			properties = {
+				"documentation",
+				"detail",
+				"additionalTextEdits",
+			},
+		},
+	}
 
 	local cfg = require("nvconfig")
 
@@ -123,15 +118,15 @@ M.setup = function()
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
-		callback = function(event)
-			M.on_attach(event)
-		end,
+		callback = M.on_attach,
 	})
 
 	vim.lsp.config("*", { capabilities = M.capabilities, on_init = M.on_init })
 	for key, value in pairs(servers) do
 		vim.lsp.config(key, value)
 	end
+
+	vim.lsp.enable("dartls")
 
 	require("mason-lspconfig").setup({
 		ensure_installed = {},
