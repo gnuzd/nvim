@@ -9,7 +9,7 @@ M.apply_highlights = function()
 		CmpBorder = { fg = colors.black2, bg = colors.black2 },
 		CmpDoc = { bg = colors.darker_black, fg = colors.white },
 		CmpDocBorder = { fg = colors.darker_black, bg = colors.darker_black },
-		CmpSel = { bg = colors.red, fg = colors.black, bold = true },
+		CmpSel = { bg = colors.blue, fg = colors.black, bold = true },
 
 		-- Cmp Item Kinds (Coloring the "Function", "Variable" labels etc.)
 		CmpItemAbbr = { fg = colors.white },
@@ -140,7 +140,9 @@ M.apply_highlights = function()
 		EndOfBuffer = { fg = colors.black, bg = colors.black }, -- Hide the ~ tildes
 		MsgArea = { fg = colors.white, bg = colors.black }, -- Message area at bottom
 		Pmenu = { bg = colors.black2, fg = colors.white },
-		PmenuSel = { bg = colors.red, fg = colors.black, bold = true },
+		PmenuSel = { bg = colors.blue, fg = colors.black, bold = true },
+		PmenuSbar = { bg = colors.black },
+		PmenuThumb = { bg = colors.grey },
 
 		-- Diagnostics (NvChad Style)
 		DiagnosticError = { fg = colors.red },

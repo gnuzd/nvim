@@ -4,21 +4,21 @@ local icons = require("configs.icons")
 
 local theme = {
 	normal = {
-		a = { fg = colors.black, bg = colors.blue, gui = "bold" },
-		b = { fg = colors.white, bg = colors.one_bg },
+		a = { fg = colors.blue, bg = colors.one_bg2, gui = "bold" },
+		b = { fg = colors.white, bg = colors.statusline_bg },
 		c = { fg = colors.white, bg = colors.statusline_bg },
 	},
 	insert = {
-		a = { fg = colors.black, bg = colors.green, gui = "bold" },
+		a = { fg = colors.green, bg = colors.one_bg2, gui = "bold" },
 	},
 	visual = {
-		a = { fg = colors.black, bg = colors.purple, gui = "bold" },
+		a = { fg = colors.purple, bg = colors.one_bg2, gui = "bold" },
 	},
 	replace = {
-		a = { fg = colors.black, bg = colors.red, gui = "bold" },
+		a = { fg = colors.red, bg = colors.one_bg2, gui = "bold" },
 	},
 	command = {
-		a = { fg = colors.black, bg = colors.yellow, gui = "bold" },
+		a = { fg = colors.yellow, bg = colors.one_bg2, gui = "bold" },
 	},
 	inactive = {
 		a = { fg = colors.grey, bg = colors.black, gui = "bold" },
@@ -28,17 +28,16 @@ local theme = {
 }
 
 local function get_lsp_client()
-	local msg = "No Active LSP"
 	local buf_ft = vim.api.nvim_get_current_buf()
 	local clients = vim.lsp.get_active_clients({ bufnr = buf_ft })
 	if next(clients) == nil then
-		return msg
+		return "No Active LSP"
 	end
 	local client_names = {}
 	for _, client in ipairs(clients) do
 		table.insert(client_names, client.name)
 	end
-	return " " .. table.concat(client_names, ", ")
+	return "✔ " .. table.concat(client_names, ", ")
 end
 
 lualine.setup({
@@ -72,7 +71,7 @@ lualine.setup({
 			},
 			{
 				"filename",
-				file_status = true,
+				file_status = false, -- Matches screenshot: just the name
 				path = 0,
 				padding = { left = 1, right = 1 },
 			},
@@ -85,10 +84,10 @@ lualine.setup({
 				"diagnostics",
 				sources = { "nvim_diagnostic" },
 				symbols = {
-					error = icons.Error,
-					warn = icons.Warn,
-					info = icons.Info,
-					hint = icons.Hint,
+					error = " ",
+					warn = " ",
+					info = " ",
+					hint = "󰌵 ",
 				},
 				padding = { left = 1, right = 1 },
 			},
@@ -98,9 +97,9 @@ lualine.setup({
 			{
 				"diff",
 				symbols = {
-					added = icons.Added,
-					modified = icons.Modified,
-					removed = icons.Removed,
+					added = " ",
+					modified = " ",
+					removed = " ",
 				},
 				padding = { left = 1, right = 1 },
 			},
@@ -109,6 +108,7 @@ lualine.setup({
 					return "|"
 				end,
 				color = { fg = colors.grey },
+				padding = { left = 1, right = 1 },
 			},
 			{
 				function()
@@ -121,21 +121,30 @@ lualine.setup({
 			{
 				"encoding",
 				padding = { left = 1, right = 1 },
+				color = { fg = colors.red }, -- Matches screenshot: pinkish-red
 			},
-		},
-		lualine_y = {
+			{
+				function()
+					local ft = vim.bo.filetype
+					if ft == "" then return "" end
+					return "{} " .. ft
+				end,
+				padding = { left = 1, right = 1 },
+				color = { fg = colors.blue }, -- Matches screenshot: blue
+			},
 			{
 				get_lsp_client,
 				padding = { left = 1, right = 1 },
-				color = { fg = colors.green },
+				color = { fg = colors.green }, -- Matches screenshot: green
 			},
 		},
+		lualine_y = {},
 		lualine_z = {
 			{
 				function()
-					return icons.Folder .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+					return " " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 				end,
-				color = { fg = colors.black, bg = colors.blue, gui = "bold" },
+				color = { fg = colors.red, bg = colors.one_bg2, gui = "bold" },
 				padding = { left = 1, right = 1 },
 			},
 		},
