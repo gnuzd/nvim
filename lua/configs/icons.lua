@@ -17,9 +17,9 @@ return {
 	Keyword = "󰌋",
 	Snippet = "",
 	Color = "󱓻",
-	File = "󰈚",
+	File = "󰈚 ", -- Combined
 	Reference = "󰈇",
-	Folder = "󰉋",
+	Folder = "󰉋 ", -- Combined
 	EnumMember = "",
 	Constant = "󰏿",
 	Struct = "󰙅",
@@ -33,7 +33,7 @@ return {
 	Boolean = "󰨙",
 	Number = "󰎠",
 	Null = "󰟢",
-	String = "󰉿",
+	String = "󰉿", -- Combined
 	Calendar = "",
 	Watch = "󰥔",
 	Package = "",
@@ -51,10 +51,8 @@ return {
 	Branch = " ",
 
 	-- UI
-	Folder = "󰉋 ",
 	FolderOpen = "󰝰 ",
 	FolderEmpty = "󰜌 ",
-	File = "󰈚 ",
 	FileReadOnly = "󰌾 ",
 
 	-- Miscellaneous
