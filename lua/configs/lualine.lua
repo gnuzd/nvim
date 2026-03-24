@@ -4,26 +4,26 @@ local icons = require("configs.icons")
 
 local theme = {
 	normal = {
-		a = { fg = colors.blue, bg = colors.one_bg2, gui = "bold" },
-		b = { fg = colors.white, bg = colors.statusline_bg },
-		c = { fg = colors.white, bg = colors.statusline_bg },
+		a = { fg = colors.blue, bg = colors.black2, gui = "bold" },
+		b = { fg = colors.white, bg = colors.black2 },
+		c = { fg = colors.white, bg = colors.black2 },
 	},
 	insert = {
-		a = { fg = colors.green, bg = colors.one_bg2, gui = "bold" },
+		a = { fg = colors.green, bg = colors.black2, gui = "bold" },
 	},
 	visual = {
-		a = { fg = colors.purple, bg = colors.one_bg2, gui = "bold" },
+		a = { fg = colors.purple, bg = colors.black2, gui = "bold" },
 	},
 	replace = {
-		a = { fg = colors.red, bg = colors.one_bg2, gui = "bold" },
+		a = { fg = colors.red, bg = colors.black2, gui = "bold" },
 	},
 	command = {
-		a = { fg = colors.yellow, bg = colors.one_bg2, gui = "bold" },
+		a = { fg = colors.yellow, bg = colors.black2, gui = "bold" },
 	},
 	inactive = {
-		a = { fg = colors.grey, bg = colors.black, gui = "bold" },
-		b = { fg = colors.grey, bg = colors.black },
-		c = { fg = colors.grey, bg = colors.black },
+		a = { fg = colors.grey, bg = colors.black2, gui = "bold" },
+		b = { fg = colors.grey, bg = colors.black2 },
+		c = { fg = colors.grey, bg = colors.black2 },
 	},
 }
 
@@ -144,7 +144,7 @@ lualine.setup({
 				function()
 					return " " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 				end,
-				color = { fg = colors.red, bg = colors.one_bg2, gui = "bold" },
+				color = { fg = colors.red, bg = colors.black2, gui = "bold" },
 				padding = { left = 1, right = 1 },
 			},
 		},

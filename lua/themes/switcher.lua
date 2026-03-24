@@ -1,33 +1,38 @@
 local M = {}
 
+-- Mapping UI themes to actual colorschemes
+-- This defines which base colorscheme to use for each UI theme.
+-- If a colorscheme is not installed, it will skip it and apply custom highlights.
+local colorscheme_map = {
+	gruvbox = "gruvbox-material",
+	onedark = "onedark",
+	github_dark = "github_dark",
+}
+
 -- Just applies the theme to the current session (for preview)
 M.apply_theme = function(theme_name, silent)
+	-- Reload the scheme to pick up any color changes
+	package.loaded["themes.schemes." .. theme_name] = nil
 	local ok, _ = pcall(require, "themes.schemes." .. theme_name)
 	if not ok then
 		return
 	end
 
-	-- Mapping UI themes to actual colorschemes
-	local colorscheme_map = {
-		gruvbox = "gruvbox-material",
-		onedark = "gruvbox-material",
-	}
-
 	-- Set a temporary global so init.lua knows which one to pick up during preview
 	_G.preview_theme = theme_name
 
-	-- Apply the actual colorscheme if mapped
+	-- Apply the actual colorscheme if mapped (with pcall to prevent errors if not installed)
 	if colorscheme_map[theme_name] then
-		vim.cmd.colorscheme(colorscheme_map[theme_name])
+		pcall(vim.cmd.colorscheme, colorscheme_map[theme_name])
 	end
 
 	-- Reload themes and lualine
 	package.loaded["themes"] = nil
 	package.loaded["themes.init"] = nil
-	package.loaded["themes.schemes." .. theme_name] = nil
-	package.loaded["configs.lualine"] = nil
 	package.loaded["themes.highlights"] = nil
+	package.loaded["configs.lualine"] = nil
 	package.loaded["theme_state"] = nil
+	package.loaded["themes.switcher"] = nil -- For realtime switcher updates
 
 	-- Apply the new colors to lualine
 	local status, err = pcall(require, "configs.lualine")
@@ -66,6 +71,8 @@ M.open_picker = function()
 	for _, path in ipairs(files) do
 		local name = vim.fn.fnamemodify(path, ":t:r")
 		if name ~= "init" and name ~= "switcher" and name ~= "highlights" then
+			-- Clear to ensure we pick up color changes
+			package.loaded["themes.schemes." .. name] = nil
 			local ok, theme_mod = pcall(require, "themes.schemes." .. name)
 			if ok then
 				-- Create custom highlights for the preview dots
@@ -134,7 +141,7 @@ M.open_picker = function()
 					" ",
 					" return M",
 				}
-				
+
 				-- Ensure the buffer is valid and modifiable before modifying
 				if vim.api.nvim_buf_is_valid(ctx.buf) then
 					vim.bo[ctx.buf].modifiable = true

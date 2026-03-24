@@ -1,1 +1,1 @@
-return { theme = 'gruvbox' }
+return { theme = 'github_dark' }
