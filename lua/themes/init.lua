@@ -20,10 +20,10 @@ M.get_theme_colors = function()
 		end
 	end
 
-	local ok, theme_mod = pcall(require, "themes." .. theme)
+	local ok, theme_mod = pcall(require, "themes.schemes." .. theme)
 	if not ok then
 		-- Absolute fallback if the theme file is missing
-		return require("themes.gruvbox").colors
+		return require("themes.schemes.gruvbox").colors
 	end
 
 	return theme_mod.colors

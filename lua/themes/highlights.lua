@@ -172,6 +172,12 @@ M.apply_highlights = function()
 	for group, opts in pairs(highlights) do
 		vim.api.nvim_set_hl(0, group, opts)
 	end
+
+	-- Sync Ghostty terminal colors (OSC 11: background, OSC 10: foreground)
+	if colors.black and colors.white then
+		io.write(string.format("\27]11;%s\7", colors.black))
+		io.write(string.format("\27]10;%s\7", colors.white))
+	end
 end
 
 return M

@@ -2,7 +2,7 @@ local M = {}
 
 -- Just applies the theme to the current session (for preview)
 M.apply_theme = function(theme_name, silent)
-	local ok, _ = pcall(require, "themes." .. theme_name)
+	local ok, _ = pcall(require, "themes.schemes." .. theme_name)
 	if not ok then
 		return
 	end
@@ -24,7 +24,7 @@ M.apply_theme = function(theme_name, silent)
 	-- Reload themes and lualine
 	package.loaded["themes"] = nil
 	package.loaded["themes.init"] = nil
-	package.loaded["themes." .. theme_name] = nil
+	package.loaded["themes.schemes." .. theme_name] = nil
 	package.loaded["configs.lualine"] = nil
 	package.loaded["themes.highlights"] = nil
 	package.loaded["theme_state"] = nil
@@ -54,7 +54,7 @@ M.save_theme = function(theme_name)
 end
 
 M.open_picker = function()
-	local files = vim.api.nvim_get_runtime_file("lua/themes/*.lua", true)
+	local files = vim.api.nvim_get_runtime_file("lua/themes/schemes/*.lua", true)
 	local items = {}
 	local initial_theme = "gruvbox"
 
@@ -66,7 +66,7 @@ M.open_picker = function()
 	for _, path in ipairs(files) do
 		local name = vim.fn.fnamemodify(path, ":t:r")
 		if name ~= "init" and name ~= "switcher" and name ~= "highlights" then
-			local ok, theme_mod = pcall(require, "themes." .. name)
+			local ok, theme_mod = pcall(require, "themes.schemes." .. name)
 			if ok then
 				-- Create custom highlights for the preview dots
 				local c = theme_mod.colors
@@ -147,10 +147,10 @@ M.open_picker = function()
 			end
 		end,
 		confirm = function(picker, item)
-			picker:close()
 			if item then
 				M.save_theme(item.value)
 			end
+			picker:close()
 		end,
 		on_close = function()
 			if _G.preview_theme then
