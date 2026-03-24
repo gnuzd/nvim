@@ -73,6 +73,12 @@ map("n", "<leader>.", "<cmd>lua Snacks.scratch() <cr>", { desc = " [Snacks] Togg
 map("n", "<leader>cr", "<cmd>lua Snacks.rename.rename_file() <cr>", { desc = " [Snacks] Rename File" })
 map("n", "<leader>x", "<cmd>lua Snacks.bufdelete() <cr>", { desc = " [Snacks] Delete Buffer" })
 map("n", "<leader>th", "<cmd>lua Snacks.picker.colorschemes() <cr>", { desc = " [Snacks] Pick Colorschemes" })
+map(
+	"n",
+	"<leader>tu",
+	"<cmd>lua require('themes.switcher').open_picker() <cr>",
+	{ desc = " [Theme] UI Theme Switcher" }
+)
 map({ "n", "v" }, "<leader>gB", "<cmd>lua Snacks.gitbrowse() <cr>", { desc = " [Snacks] Git Browse" })
 
 -- conform

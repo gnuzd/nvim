@@ -48,6 +48,9 @@ o.undofile = true
 
 o.termguicolors = true
 
+o.updatetime = 250
+o.shada = "'100,<50,s10,h"
+
 -------------------------------------- autocmd ------------------------------------------
 
 vim.api.nvim_create_autocmd("TextYankPost", {

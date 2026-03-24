@@ -1,8 +1,9 @@
 return {
-	Namespace = "󰌗",
+	-- LSP Kinds
+	Namespace = "󰅱",
 	Text = "󰉿",
 	Method = "󰆧",
-	Function = "󰆧",
+	Function = "󰊕",
 	Constructor = "",
 	Field = "󰜢",
 	Variable = "󰀫",
@@ -28,15 +29,36 @@ return {
 	Table = "",
 	Object = "󰅩",
 	Tag = "",
-	Array = "[]",
-	Boolean = "",
-	Number = "",
+	Array = "󰅪",
+	Boolean = "󰨙",
+	Number = "󰎠",
 	Null = "󰟢",
-	Supermaven = "",
 	String = "󰉿",
 	Calendar = "",
 	Watch = "󰥔",
 	Package = "",
+
+	-- Diagnostics
+	Error = " ",
+	Warn = " ",
+	Info = " ",
+	Hint = "󰌵 ",
+
+	-- Git
+	Added = " ",
+	Modified = " ",
+	Removed = " ",
+	Branch = " ",
+
+	-- UI
+	Folder = "󰉋 ",
+	FolderOpen = "󰝰 ",
+	FolderEmpty = "󰜌 ",
+	File = "󰈚 ",
+	FileReadOnly = "󰌾 ",
+
+	-- Miscellaneous
+	Supermaven = "",
 	Copilot = "",
 	Codeium = "",
 	TabNine = "",

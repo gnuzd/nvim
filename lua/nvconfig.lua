@@ -1,5 +1,9 @@
 local M = {}
 
+M.ui = {
+	theme = "gruvbox",
+}
+
 M.mason = {
 	pks = { "stylua", "tree-sitter-cli", "prettierd", "tailwindcss" },
 }

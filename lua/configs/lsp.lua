@@ -60,18 +60,20 @@ M.capabilities = {}
 M.diagnostic_config = function()
 	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 
+	local icons = require("configs.icons")
+
 	vim.diagnostic.config({
 		severity_sort = true,
 		float = { border = "rounded", source = "if_many" },
 		underline = { severity = vim.diagnostic.severity.ERROR },
-		signs = vim.g.have_nerd_font and {
+		signs = {
 			text = {
-				[vim.diagnostic.severity.ERROR] = "󰅚 ",
-				[vim.diagnostic.severity.WARN] = "󰀪 ",
-				[vim.diagnostic.severity.INFO] = "󰋽 ",
-				[vim.diagnostic.severity.HINT] = "󰌶 ",
+				[vim.diagnostic.severity.ERROR] = icons.Error,
+				[vim.diagnostic.severity.WARN] = icons.Warn,
+				[vim.diagnostic.severity.INFO] = icons.Info,
+				[vim.diagnostic.severity.HINT] = icons.Hint,
 			},
-		} or {},
+		},
 		virtual_text = {
 			source = "if_many",
 			spacing = 2,

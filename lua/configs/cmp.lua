@@ -1,5 +1,7 @@
 local cmp = require("cmp")
 
+require("themes.highlights").apply_highlights()
+
 local function border(hl_name)
 	return {
 		{ "╭", hl_name },
@@ -14,23 +16,35 @@ local function border(hl_name)
 end
 
 local options = {
+	completion = {
+		completeopt = "menu,menuone,noselect",
+	},
+
+	window = {
+		completion = {
+			side_padding = 0,
+			winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:None",
+			scrollbar = false,
+		},
+		documentation = {
+			border = border("CmpDocBorder"),
+			winhighlight = "Normal:CmpDoc,FloatBorder:CmpDocBorder",
+		},
+	},
+
 	formatting = {
+		fields = { "kind", "abbr", "menu" },
 		format = function(entry, item)
 			local icons = require("configs.icons")
 			local icon = icons[item.kind] or ""
-			local kind = item.kind or ""
 
+			local kind = item.kind
+			item.kind = " " .. icon .. " "
 			item.menu = kind
-			item.menu_hl_group = "CmpItemKind" .. kind
-			item.kind = icon
 
 			return item
 		end,
-
-		fields = { "kind", "abbr", "menu" },
 	},
-
-	completion = { completeopt = "menu,menuone" },
 
 	snippet = {
 		expand = function(args)
@@ -38,18 +52,6 @@ local options = {
 		end,
 	},
 
-	window = {
-		completion = cmp.config.window.bordered({
-			side_padding = 1,
-			scrollbar = false,
-			winhighlight = "Normal:Normal,FloatBorder:BorderBG,CursorLine:PmenuSel,Search:None",
-			-- winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:None,FloatBorder:CmpBorder",
-		}),
-		documentation = {
-			border = border("CmpDocBorder"),
-			winhighlight = "Normal:CmpDoc,FloatBorder:CmpDocBorder",
-		},
-	},
 	mapping = {
 		["<Up>"] = cmp.mapping.select_prev_item(),
 		["<Down>"] = cmp.mapping.select_next_item(),
