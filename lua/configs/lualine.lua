@@ -29,7 +29,7 @@ local theme = {
 
 local function get_lsp_client()
 	local buf_ft = vim.api.nvim_get_current_buf()
-	local clients = vim.lsp.get_active_clients({ bufnr = buf_ft })
+	local clients = vim.lsp.get_clients({ bufnr = buf_ft })
 	if next(clients) == nil then
 		return "No Active LSP"
 	end

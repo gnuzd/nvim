@@ -17,12 +17,12 @@ end
 
 local options = {
 	completion = {
-		completeopt = "menu,menuone,noselect",
+		completeopt = "menu,menuone",
 	},
 
 	window = {
 		completion = {
-			side_padding = 0,
+			side_padding = 1,
 			winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:None",
 			scrollbar = false,
 		},
