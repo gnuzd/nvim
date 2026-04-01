@@ -1,5 +1,6 @@
 local M = {}
 local api = vim.api
+local uv = vim.loop
 
 local state = {
     root = vim.fn.getcwd(),
@@ -9,6 +10,7 @@ local state = {
     buf = nil,
     show_hidden = false,
     show_ignored = false,
+    ignored_cache = {},
 }
 
 -- Nerd Font Icons to match screenshot
@@ -42,34 +44,40 @@ local function get_file_icon(name)
     return icons.file_default
 end
 
-local function is_git_ignored(path)
-    if state.show_ignored then return false end
-    local handle = io.popen("git check-ignore " .. vim.fn.shellescape(path) .. " 2>/dev/null")
-    if not handle then return false end
-    local result = handle:read("*a")
+-- Optimization: Fetch all ignored files once per render
+local function update_ignored_cache()
+    state.ignored_cache = {}
+    if state.show_ignored then return end
+    
+    local handle = io.popen("git ls-files --ignored --exclude-standard --others --directory 2>/dev/null")
+    if not handle then return end
+    
+    for line in handle:lines() do
+        local path = state.root .. '/' .. line:gsub("/$", "")
+        state.ignored_cache[path] = true
+    end
     handle:close()
-    return result ~= ""
 end
 
 local function get_nodes(dir, level)
     local nodes = {}
-    local handle = vim.loop.fs_scandir(dir)
+    local handle = uv.fs_scandir(dir)
     if not handle then return nodes end
 
     while true do
-        local name, type = vim.loop.fs_scandir_next(handle)
+        local name, type = uv.fs_scandir_next(handle)
         if not name then break end
 
         local path = dir .. '/' .. name
-        local hidden = name:match("^%.")
+        local is_hidden = name:sub(1, 1) == "."
         
         local should_show = true
-        if hidden and not state.show_hidden then should_show = false end
-        if should_show and not state.show_ignored and is_git_ignored(path) then should_show = false end
+        if is_hidden and not state.show_hidden then should_show = false end
+        if should_show and not state.show_ignored and state.ignored_cache[path] then should_show = false end
 
         if should_show then
             table.insert(nodes, {
-                path = path, name = name, is_dir = type == 'directory',
+                path = path, name = name, is_dir = (type == 'directory'),
                 level = level, expanded = state.expanded_dirs[path] or false
             })
         end
@@ -86,11 +94,11 @@ local function build_tree(dir, level, result, parent_is_last_map)
     local nodes = get_nodes(dir, level)
     for i, node in ipairs(nodes) do
         node.is_last = (i == #nodes)
-        node.parent_is_last_map = vim.deepcopy(parent_is_last_map or {})
+        node.parent_is_last_map = parent_is_last_map
         table.insert(result, node)
         
         if node.is_dir and state.expanded_dirs[node.path] then
-            local new_map = vim.deepcopy(node.parent_is_last_map)
+            local new_map = vim.deepcopy(parent_is_last_map)
             new_map[level] = node.is_last
             build_tree(node.path, level + 1, result, new_map)
         end
@@ -100,26 +108,62 @@ end
 local function render()
     if not state.buf or not api.nvim_buf_is_valid(state.buf) then return end
     
+    update_ignored_cache()
     state.nodes = {}
-    build_tree(state.root, 0, state.nodes)
+    build_tree(state.root, 0, state.nodes, {})
 
     local lines = {}
+    local highlight_data = {}
+    
     local root_name = vim.fn.fnamemodify(state.root, ":t")
     table.insert(lines, icons.folder_open .. " " .. root_name)
+    table.insert(highlight_data, { line = 0, col_start = 0, col_end = -1, group = "TreeExplorerRoot" })
 
-    for _, node in ipairs(state.nodes) do
+    for idx, node in ipairs(state.nodes) do
         local line = ""
+        local hl_line = idx
+        local line_highlights = {}
+
         for i = 0, node.level - 1 do
-            line = line .. (node.parent_is_last_map[i] and "  " or "│ ")
+            local connector = node.parent_is_last_map[i] and "  " or "│ "
+            local start_col = #line
+            line = line .. connector
+            if connector == "│ " then
+                table.insert(line_highlights, { col_start = start_col, col_end = start_col + 3, group = "TreeExplorerConnector" })
+            end
         end
-        line = line .. (node.is_last and "└─ " or "├─ ")
+
+        local connector = (node.is_last and "└─ " or "├─ ")
+        local conn_start = #line
+        line = line .. connector
+        table.insert(line_highlights, { col_start = conn_start, col_end = conn_start + #connector, group = "TreeExplorerConnector" })
+
         local icon = node.is_dir and (node.expanded and icons.folder_open or icons.folder_closed) or get_file_icon(node.name)
-        table.insert(lines, line .. icon .. " " .. node.name)
+        local icon_start = #line
+        line = line .. icon .. " "
+        local icon_hl = node.is_dir and "TreeExplorerFolderIcon" or "TreeExplorerFileIcon"
+        table.insert(line_highlights, { col_start = icon_start, col_end = icon_start + #icon, group = icon_hl })
+
+        local name_start = #line
+        line = line .. node.name
+        local name_hl = node.is_dir and "TreeExplorerFolderName" or "TreeExplorerFileName"
+        table.insert(line_highlights, { col_start = name_start, col_end = -1, group = name_hl })
+
+        table.insert(lines, line)
+        for _, hl in ipairs(line_highlights) do
+            table.insert(highlight_data, { line = hl_line, col_start = hl.col_start, col_end = hl.col_end, group = hl.group })
+        end
     end
 
     api.nvim_buf_set_option(state.buf, 'modifiable', true)
     api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     api.nvim_buf_set_option(state.buf, 'modifiable', false)
+
+    local ns = api.nvim_create_namespace("TreeExplorer")
+    api.nvim_buf_clear_namespace(state.buf, ns, 0, -1)
+    for _, hl in ipairs(highlight_data) do
+        api.nvim_buf_add_highlight(state.buf, ns, hl.group, hl.line, hl.col_start, hl.col_end)
+    end
 end
 
 local function handle_select()
@@ -149,34 +193,25 @@ local function create_item()
 
     vim.ui.input({ prompt = "New File/Folder (folder ends with /): " }, function(input)
         if not input or input == "" then return end
-        
         local is_dir = input:match("/$")
         local full_path = parent_dir .. "/" .. input
-        
         if is_dir then
             vim.fn.mkdir(full_path, "p")
             state.expanded_dirs[full_path:gsub("/$", "")] = true
         else
             vim.fn.writefile({}, full_path)
         end
-        
         render()
     end)
 end
 
 local function delete_item()
     local idx = api.nvim_win_get_cursor(state.win)[1]
-    if idx <= 1 then return end -- Don't delete root
-
+    if idx <= 1 then return end
     local node = state.nodes[idx - 1]
-    local msg = string.format("Delete %s? (y/n): ", node.name)
-    
-    local confirm = vim.fn.confirm(msg, "&Yes\n&No", 2)
-    if confirm == 1 then
+    if vim.fn.confirm("Delete " .. node.name .. "?", "&Yes\n&No", 2) == 1 then
         vim.fn.delete(node.path, "rf")
-        if node.is_dir then
-            state.expanded_dirs[node.path] = nil
-        end
+        state.expanded_dirs[node.path] = nil
         render()
     end
 end
@@ -225,12 +260,10 @@ function M.toggle()
         local node_idx = idx - 1
         if node_idx < 1 then return end
         local node = state.nodes[node_idx]
-        if node.is_dir then
-            if not state.expanded_dirs[node.path] then
-                state.expanded_dirs[node.path] = true
-                render()
-            end
-        else
+        if node.is_dir and not state.expanded_dirs[node.path] then
+            state.expanded_dirs[node.path] = true
+            render()
+        elseif not node.is_dir then
             handle_select()
         end
     end, opts)
