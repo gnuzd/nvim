@@ -17,8 +17,17 @@ vim.keymap.set('n', '<leader>th', themes.open, { desc = 'Open theme picker' })
 vim.keymap.set({ 'n', 'i', 'v' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save buffer' })
 
 -- Buffer Management
-vim.keymap.set('n', '<Tab>', '<cmd>bn<CR>', { desc = 'Next buffer' })
-vim.keymap.set('n', '<S-Tab>', '<cmd>bp<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<Tab>', function()
+  if vim.bo.filetype ~= 'tree-explorer' then
+    vim.cmd('bn')
+  end
+end, { desc = 'Next buffer' })
+
+vim.keymap.set('n', '<S-Tab>', function()
+  if vim.bo.filetype ~= 'tree-explorer' then
+    vim.cmd('bp')
+  end
+end, { desc = 'Previous buffer' })
 vim.keymap.set('n', '<leader>x', function()
   local bufnr = vim.api.nvim_get_current_buf()
   local modified = vim.api.nvim_buf_get_option(bufnr, 'modified')
