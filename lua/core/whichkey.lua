@@ -22,6 +22,8 @@ local keymaps = {
     { key = "<leader>ca", desc = "Code action" },
     { key = "<leader>tt", desc = "Toggle diagnostics list" },
     { key = "<leader>td", desc = "List TODO comments" },
+    { key = "<leader>ff", desc = "Find files (fzf)" },
+    { key = "<leader>fw", desc = "Find word (grep)" },
   }},
   { group = "Completion (Insert Mode)", maps = {
     { key = "<Tab>", desc = "Next item / Trigger completion" },

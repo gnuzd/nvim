@@ -20,8 +20,11 @@ vim.keymap.set('n', '?', wk.show, { desc = 'Show help menu' })
 -- TODO and Diagnostics
 local todo = require('core.todo')
 local diags = require('core.diagnostics')
+local search = require('core.search')
 vim.keymap.set('n', '<leader>td', todo.list, { desc = 'List TODOs' })
 vim.keymap.set('n', '<leader>tt', diags.toggle, { desc = 'Toggle diagnostic list' })
+vim.keymap.set('n', '<leader>ff', search.find_files, { desc = 'Find files' })
+vim.keymap.set('n', '<leader>fw', search.live_grep, { desc = 'Find word (grep)' })
 
 -- Save with Ctrl+s
 vim.keymap.set({ 'n', 'i', 'v' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save buffer' })
