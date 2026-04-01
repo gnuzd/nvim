@@ -31,6 +31,12 @@ function M.apply_highlights(colors)
     hl(0, "FloatBorder", { fg = colors.blue })
     hl(0, "NormalFloat", { bg = colors.black })
     hl(0, "StatusLine", { fg = colors.white, bg = colors.black2 })
+
+    -- Completion Menu Highlights
+    hl(0, "Pmenu", { fg = colors.white, bg = colors.black2 }) -- Background of the menu
+    hl(0, "PmenuSel", { fg = colors.black, bg = colors.blue }) -- Background of the selected item
+    hl(0, "PmenuSbar", { bg = colors.black2 })
+    hl(0, "PmenuThumb", { bg = colors.grey })
     
     -- Custom Explorer Highlights
     hl(0, "TreeExplorerRoot", { fg = colors.green, bold = true })
