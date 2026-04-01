@@ -31,6 +31,8 @@ function M.apply_highlights(colors)
     hl(0, "FloatBorder", { fg = colors.blue })
     hl(0, "NormalFloat", { bg = colors.black })
     hl(0, "StatusLine", { fg = colors.white, bg = colors.black2 })
+    hl(0, "WinSeparator", { fg = colors.grey })
+    hl(0, "VertSplit", { fg = colors.grey })
 
     -- Completion Menu Highlights
     hl(0, "Pmenu", { fg = colors.white, bg = colors.black2 }) -- Background of the menu
