@@ -13,6 +13,12 @@ vim.keymap.set('n', '\\', explorer.toggle, { desc = 'Toggle custom tree explorer
 local themes = require('core.theme_picker')
 vim.keymap.set('n', '<leader>th', themes.open, { desc = 'Open theme picker' })
 
+-- TODO and Diagnostics
+local todo = require('core.todo')
+local diags = require('core.diagnostics')
+vim.keymap.set('n', '<leader>td', todo.list, { desc = 'List TODOs' })
+vim.keymap.set('n', '<leader>tt', diags.toggle, { desc = 'Toggle diagnostic list' })
+
 -- Save with Ctrl+s
 vim.keymap.set({ 'n', 'i', 'v' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save buffer' })
 

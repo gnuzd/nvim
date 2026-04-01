@@ -34,6 +34,31 @@ function M.apply_highlights(colors)
     hl(0, "WinSeparator", { fg = colors.grey })
     hl(0, "VertSplit", { fg = colors.grey })
 
+    -- Statusline Highlights
+    hl(0, "StatusLineNormal", { fg = colors.black, bg = colors.blue, bold = true })
+    hl(0, "StatusLineInsert", { fg = colors.black, bg = colors.green, bold = true })
+    hl(0, "StatusLineVisual", { fg = colors.black, bg = colors.purple, bold = true })
+    hl(0, "StatusLineReplace", { fg = colors.black, bg = colors.red, bold = true })
+    hl(0, "StatusLineCommand", { fg = colors.black, bg = colors.yellow, bold = true })
+    
+    hl(0, "StatusLineFile", { fg = colors.white, bg = colors.grey, bold = true })
+    hl(0, "StatusLineGit", { fg = colors.orange, bg = colors.black2 })
+    hl(0, "StatusLineLsp", { fg = colors.cyan, bg = colors.black2 })
+    hl(0, "StatusLineError", { fg = colors.red, bg = colors.black2 })
+    hl(0, "StatusLinePos", { fg = colors.white, bg = colors.grey })
+
+    -- TODO Highlights
+    hl(0, "TodoComment", { fg = colors.blue, bg = colors.black2, bold = true })
+    hl(0, "FixmeComment", { fg = colors.red, bg = colors.black2, bold = true })
+    hl(0, "BugComment", { fg = colors.orange, bg = colors.black2, bold = true })
+    hl(0, "NoteComment", { fg = colors.green, bg = colors.black2, bold = true })
+
+    -- Diagnostics Highlights (Trouble-like)
+    hl(0, "DiagListError", { fg = colors.red })
+    hl(0, "DiagListWarn", { fg = colors.yellow })
+    hl(0, "DiagListInfo", { fg = colors.blue })
+    hl(0, "DiagListHint", { fg = colors.cyan })
+
     -- Completion Menu Highlights
     hl(0, "Pmenu", { fg = colors.white, bg = colors.black2 }) -- Background of the menu
     hl(0, "PmenuSel", { fg = colors.black, bg = colors.blue }) -- Background of the selected item
