@@ -13,6 +13,10 @@ vim.keymap.set('n', '\\', explorer.toggle, { desc = 'Toggle custom tree explorer
 local themes = require('core.theme_picker')
 vim.keymap.set('n', '<leader>th', themes.open, { desc = 'Open theme picker' })
 
+-- Help Menu
+local wk = require('core.whichkey')
+vim.keymap.set('n', '?', wk.show, { desc = 'Show help menu' })
+
 -- TODO and Diagnostics
 local todo = require('core.todo')
 local diags = require('core.diagnostics')
