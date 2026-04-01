@@ -13,6 +13,9 @@ vim.keymap.set('n', '\\', explorer.toggle, { desc = 'Toggle custom tree explorer
 local themes = require('core.theme_picker')
 vim.keymap.set('n', '<leader>th', themes.open, { desc = 'Open theme picker' })
 
+-- Save with Ctrl+s
+vim.keymap.set({ 'n', 'i', 'v' }, '<C-s>', '<cmd>write<CR>', { desc = 'Save buffer' })
+
 -- Buffer Management
 vim.keymap.set('n', '<Tab>', '<cmd>bn<CR>', { desc = 'Next buffer' })
 vim.keymap.set('n', '<S-Tab>', '<cmd>bp<CR>', { desc = 'Previous buffer' })
