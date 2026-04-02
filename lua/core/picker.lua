@@ -2,7 +2,7 @@ local M = {}
 local api = vim.api
 
 function M.open(opts)
-  -- opts: title, items, on_select, on_change, format_item, previewer
+  -- opts: title, items, on_select, on_change, format_item, previewer, on_type
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.8)
   local list_width = math.floor(width * 0.35)
@@ -15,7 +15,7 @@ function M.open(opts)
   local selected_idx = 1
   local filter = ""
   local prompt_prefix = "   "
-  local prefix_len = #prompt_prefix -- 6 bytes
+  local prefix_len = #prompt_prefix
   
   -- 1. Create Buffers
   local results_buf = api.nvim_create_buf(false, true)
@@ -59,7 +59,6 @@ function M.open(opts)
     title_pos = "center",
   })
 
-  -- Window Options
   api.nvim_win_set_option(preview_win, "number", true)
   api.nvim_win_set_option(preview_win, "wrap", true)
   if opts.preview_ft then
@@ -69,13 +68,10 @@ function M.open(opts)
   local ns_id = api.nvim_create_namespace("PickerUI")
 
   local function render()
-    -- Dynamically update the bar highlight
     local ok_k, keyword_hl = pcall(api.nvim_get_hl_by_name, "Keyword", true)
     local bar_color = ok_k and keyword_hl.foreground or 0xF38BA8
-    
     local ok_v, visual_hl = pcall(api.nvim_get_hl_by_name, "Visual", true)
     local visual_bg = ok_v and visual_hl.background or nil
-    
     api.nvim_set_hl(0, "PickerBar", { 
       fg = string.format("#%06x", bar_color), 
       bg = visual_bg and string.format("#%06x", visual_bg) or nil,
@@ -83,46 +79,43 @@ function M.open(opts)
     })
 
     local filtered = {}
-    for _, item in ipairs(items) do
-      local search_str = type(item) == "table" and (item.name or item[1]) or item
-      if search_str:lower():find(filter:lower(), 1, true) then
-        table.insert(filtered, item)
+    if opts.on_type then
+      -- If on_type is provided, items are managed externally
+      filtered = items
+    else
+      for _, item in ipairs(items) do
+        local search_str = type(item) == "table" and (item.name or item[1]) or item
+        if search_str:lower():find(filter:lower(), 1, true) then
+          table.insert(filtered, item)
+        end
       end
     end
 
     if selected_idx > #filtered then selected_idx = math.max(1, #filtered) end
     if selected_idx < 1 and #filtered > 0 then selected_idx = 1 end
 
-    -- Render Results
     local results_lines = {}
     for i, item in ipairs(filtered) do
       local display = opts.format_item and opts.format_item(item) or (type(item) == "table" and item.name or item)
-      -- ▌ (U+258C) is half-width block (3 bytes).
       local char = (i == selected_idx) and "▌" or " "
       local line = char .. display
-      -- Pad line to window width for full-line highlight
-      local padding = string.rep(" ", list_width - #display - 1)
+      local padding = string.rep(" ", list_width - #line - 1)
       table.insert(results_lines, line .. padding)
     end
     api.nvim_buf_set_option(results_buf, "modifiable", true)
     api.nvim_buf_set_lines(results_buf, 0, -1, false, results_lines)
     api.nvim_buf_set_option(results_buf, "modifiable", false)
 
-    -- Highlighting
     api.nvim_buf_clear_namespace(results_buf, -1, 0, -1)
     for i, _ in ipairs(filtered) do
       if i == selected_idx then
-        -- Bar highlight (3 bytes for ▌)
         api.nvim_buf_add_highlight(results_buf, -1, "PickerBar", i - 1, 0, 3)
-        -- Selection background (starts immediately after bar)
         api.nvim_buf_add_highlight(results_buf, -1, "Visual", i - 1, 3, -1)
       else
-        -- Dim non-selected items (1 byte for space)
         api.nvim_buf_add_highlight(results_buf, -1, "Comment", i - 1, 0, -1)
       end
     end
 
-    -- Prompt Info
     local info = string.format("%d/%d", selected_idx, #filtered)
     api.nvim_buf_clear_namespace(prompt_buf, ns_id, 0, -1)
     api.nvim_buf_set_extmark(prompt_buf, ns_id, 0, 0, {
@@ -130,7 +123,6 @@ function M.open(opts)
       virt_text_pos = "right_align",
     })
 
-    -- Preview/Change Callbacks
     if filtered[selected_idx] and opts.previewer then
       opts.previewer(filtered[selected_idx], preview_buf, preview_win)
     end
@@ -139,7 +131,6 @@ function M.open(opts)
     end
   end
 
-  -- Initial state
   api.nvim_buf_set_lines(prompt_buf, 0, -1, false, { prompt_prefix })
   api.nvim_buf_add_highlight(prompt_buf, -1, "Function", 0, 1, 4)
   render()
@@ -153,10 +144,12 @@ function M.open(opts)
 
   local function confirm()
     local filtered = {}
-    for _, item in ipairs(items) do
-      local search_str = type(item) == "table" and (item.name or item[1]) or item
-      if search_str:lower():find(filter:lower(), 1, true) then
-        table.insert(filtered, item)
+    if opts.on_type then
+      filtered = items
+    else
+      for _, item in ipairs(items) do
+        local search_str = type(item) == "table" and (item.name or item[1]) or item
+        if search_str:lower():find(filter:lower(), 1, true) then table.insert(filtered, item) end
       end
     end
     if filtered[selected_idx] and opts.on_select then
@@ -167,32 +160,29 @@ function M.open(opts)
 
   local key_opts = { buffer = prompt_buf, nowait = true, silent = true }
   
-  -- Mouse Disable
-  local mouse_keys = { "<LeftMouse>", "<RightMouse>", "<MiddleMouse>", "<ScrollWheelUp>", "<ScrollWheelDown>" }
-  for _, key in ipairs(mouse_keys) do
-    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = prompt_buf })
-    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = results_buf })
-    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = preview_buf })
-  end
-
-  local function get_filtered_count()
-    local count = 0
-    for _, item in ipairs(items) do
-      local search_str = type(item) == "table" and (item.name or item[1]) or item
-      if search_str:lower():find(filter:lower(), 1, true) then count = count + 1 end
-    end
-    return count
-  end
-
   local function move_next()
-    local count = get_filtered_count()
+    local count = #items
+    if not opts.on_type then
+      count = 0
+      for _, item in ipairs(items) do
+        local s = type(item) == "table" and (item.name or item[1]) or item
+        if s:lower():find(filter:lower(), 1, true) then count = count + 1 end
+      end
+    end
     if count == 0 then return end
     selected_idx = (selected_idx % count) + 1
     render()
   end
   
   local function move_prev()
-    local count = get_filtered_count()
+    local count = #items
+    if not opts.on_type then
+      count = 0
+      for _, item in ipairs(items) do
+        local s = type(item) == "table" and (item.name or item[1]) or item
+        if s:lower():find(filter:lower(), 1, true) then count = count + 1 end
+      end
+    end
     if count == 0 then return end
     selected_idx = (selected_idx - 2 + count) % count + 1
     render()
@@ -205,14 +195,21 @@ function M.open(opts)
   vim.keymap.set("i", "<CR>", confirm, key_opts)
   vim.keymap.set("i", "<Esc>", function() if opts.on_cancel then opts.on_cancel() end; close() end, key_opts)
 
-  -- Typing tracking
+  api.nvim_create_autocmd("CursorMovedI", {
+    buffer = prompt_buf,
+    callback = function()
+      local cursor = api.nvim_win_get_cursor(prompt_win)
+      if cursor[2] < prefix_len then
+        api.nvim_win_set_cursor(prompt_win, {1, prefix_len})
+      end
+    end
+  })
+
   api.nvim_buf_attach(prompt_buf, false, {
     on_lines = function(_, _, _, _, _, _)
       vim.schedule(function()
         if not api.nvim_buf_is_valid(prompt_buf) then return end
         local line = api.nvim_buf_get_lines(prompt_buf, 0, 1, false)[1] or ""
-        
-        -- Fix icon if deleted
         if not line:match("^   ") then
           local content = line:gsub("^%s*%s*", "")
           api.nvim_buf_set_lines(prompt_buf, 0, 1, false, { prompt_prefix .. content })
@@ -223,8 +220,17 @@ function M.open(opts)
         local new_filter = line:sub(prefix_len + 1)
         if new_filter ~= filter then
           filter = new_filter
-          selected_idx = 1
-          render()
+          if opts.on_type then
+            -- Let the caller handle the grep and call a refresh function
+            opts.on_type(filter, function(new_items)
+              items = new_items
+              selected_idx = 1
+              render()
+            end)
+          else
+            selected_idx = 1
+            render()
+          end
         end
       end)
     end
