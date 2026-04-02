@@ -1,3 +1,6 @@
+-- Load plugins first
+require('core.plugins')
+
 -- Load core configuration
 require('core.options')
 require('core.keymaps')

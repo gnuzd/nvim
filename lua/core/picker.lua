@@ -16,6 +16,7 @@ function M.open(opts)
   local filter = ""
   local prompt_prefix = "   "
   local prefix_len = #prompt_prefix
+  local original_win = api.nvim_get_current_win()
   
   -- 1. Create Buffers
   local results_buf = api.nvim_create_buf(false, true)
@@ -66,6 +67,7 @@ function M.open(opts)
   end
 
   local ns_id = api.nvim_create_namespace("PickerUI")
+  local last_filtered = {}
 
   local function render()
     local ok_k, keyword_hl = pcall(api.nvim_get_hl_by_name, "Keyword", true)
@@ -80,7 +82,6 @@ function M.open(opts)
 
     local filtered = {}
     if opts.on_type then
-      -- If on_type is provided, items are managed externally
       filtered = items
     else
       for _, item in ipairs(items) do
@@ -90,6 +91,7 @@ function M.open(opts)
         end
       end
     end
+    last_filtered = filtered
 
     if selected_idx > #filtered then selected_idx = math.max(1, #filtered) end
     if selected_idx < 1 and #filtered > 0 then selected_idx = 1 end
@@ -140,49 +142,35 @@ function M.open(opts)
     if api.nvim_win_is_valid(results_win) then api.nvim_win_close(results_win, true) end
     if api.nvim_win_is_valid(preview_win) then api.nvim_win_close(preview_win, true) end
     if api.nvim_win_is_valid(prompt_win) then api.nvim_win_close(prompt_win, true) end
+    if api.nvim_win_is_valid(original_win) then api.nvim_set_current_win(original_win) end
   end
 
   local function confirm()
-    local filtered = {}
-    if opts.on_type then
-      filtered = items
-    else
-      for _, item in ipairs(items) do
-        local search_str = type(item) == "table" and (item.name or item[1]) or item
-        if search_str:lower():find(filter:lower(), 1, true) then table.insert(filtered, item) end
-      end
-    end
-    if filtered[selected_idx] and opts.on_select then
-      opts.on_select(filtered[selected_idx])
-    end
+    local selected_item = last_filtered[selected_idx]
     close()
+    if selected_item and opts.on_select then
+      opts.on_select(selected_item)
+    end
   end
 
   local key_opts = { buffer = prompt_buf, nowait = true, silent = true }
   
+  local mouse_keys = { "<LeftMouse>", "<RightMouse>", "<MiddleMouse>", "<ScrollWheelUp>", "<ScrollWheelDown>" }
+  for _, key in ipairs(mouse_keys) do
+    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = prompt_buf })
+    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = results_buf })
+    vim.keymap.set({ "n", "i", "v" }, key, "<nop>", { buffer = preview_buf })
+  end
+
   local function move_next()
-    local count = #items
-    if not opts.on_type then
-      count = 0
-      for _, item in ipairs(items) do
-        local s = type(item) == "table" and (item.name or item[1]) or item
-        if s:lower():find(filter:lower(), 1, true) then count = count + 1 end
-      end
-    end
+    local count = #last_filtered
     if count == 0 then return end
     selected_idx = (selected_idx % count) + 1
     render()
   end
   
   local function move_prev()
-    local count = #items
-    if not opts.on_type then
-      count = 0
-      for _, item in ipairs(items) do
-        local s = type(item) == "table" and (item.name or item[1]) or item
-        if s:lower():find(filter:lower(), 1, true) then count = count + 1 end
-      end
-    end
+    local count = #last_filtered
     if count == 0 then return end
     selected_idx = (selected_idx - 2 + count) % count + 1
     render()
@@ -221,7 +209,6 @@ function M.open(opts)
         if new_filter ~= filter then
           filter = new_filter
           if opts.on_type then
-            -- Let the caller handle the grep and call a refresh function
             opts.on_type(filter, function(new_items)
               items = new_items
               selected_idx = 1

@@ -15,7 +15,8 @@ vim.keymap.set('n', '<leader>th', themes.open, { desc = 'Open theme picker' })
 
 -- Help Menu
 local wk = require('core.whichkey')
-vim.keymap.set('n', '?', wk.show, { desc = 'Show help menu' })
+wk.setup()
+vim.keymap.set('n', '?', function() wk.show_menu() end, { desc = 'Show help menu' })
 
 -- TODO and Diagnostics
 local todo = require('core.todo')
@@ -56,6 +57,8 @@ vim.keymap.set('n', '<leader>x', function()
     vim.cmd('bd')
   end
 end, { desc = 'Close current buffer' })
+
+vim.keymap.set('i', '<C-Space>', '<C-x><C-o>', { desc = 'Trigger completion' })
 
 -- Completion Keymaps
 local function check_backspace()
