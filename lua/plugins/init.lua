@@ -1,15 +1,26 @@
 return {
 	"nvim-lua/plenary.nvim",
 
+	-- {
+	-- 	"sainnhe/gruvbox-material",
+	-- 	priority = 1000,
+	-- 	config = function()
+	-- 		vim.g.gruvbox_material_better_performance = 1
+	-- 		-- vim.g.gruvbox_material_transparent_background = 2
+	-- 		vim.cmd.colorscheme("gruvbox-material")
+	-- 		vim.api.nvim_set_hl(0, "FloatBorder", { bg = "" })
+	-- 		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "" })
+	-- 	end,
+	-- },
+	--
 	{
-		"sainnhe/gruvbox-material",
+		"neanias/everforest-nvim",
 		priority = 1000,
 		config = function()
-			vim.g.gruvbox_material_better_performance = 1
-			-- vim.g.gruvbox_material_transparent_background = 2
-			vim.cmd.colorscheme("gruvbox-material")
-			vim.api.nvim_set_hl(0, "FloatBorder", { bg = "" })
-			vim.api.nvim_set_hl(0, "NormalFloat", { bg = "" })
+			require("everforest").setup({
+				background = "hard",
+			})
+			vim.cmd.colorscheme("everforest")
 		end,
 	},
 
@@ -190,6 +201,7 @@ return {
 			require("mini.ai").setup({})
 			require("mini.indentscope").setup({ symbol = "┊" })
 			require("mini.pairs").setup({})
+			require("mini.surround").setup()
 		end,
 	},
 
@@ -202,8 +214,11 @@ return {
 		end,
 	},
 
-	{ "brenoprata10/nvim-highlight-colors", opts = {
-		render = "virtual",
-		virtual_symbol = "■",
-	} },
+	{
+		"brenoprata10/nvim-highlight-colors",
+		opts = {
+			render = "virtual",
+			virtual_symbol = "■",
+		},
+	},
 }
